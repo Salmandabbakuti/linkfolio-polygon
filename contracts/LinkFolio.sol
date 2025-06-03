@@ -8,15 +8,25 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 contract LinkFolio is ERC721 {
     using Strings for uint256;
 
-    uint256 public currentTokenId = 1;
+    // starts from 1 to prevent returning default value of 0 if profile not found by handle
+    // which causes inaccuracies in other functions and in the frontend
+    uint256 public nextTokenId = 1;
+
+    enum ProfileCategory {
+        Personal,
+        Creator,
+        Business
+    }
 
     struct Profile {
         uint256 tokenId;
         string name;
         string handle;
+        ProfileCategory category;
         string bio;
         string avatar;
-        address owner;
+        address owner; // owner can be smart-account creating the profile
+        address _eoa; // actual address that owns the profile nft and can update/delete the profile
         string[] linkKeys;
         mapping(string => string) links;
     }
@@ -33,10 +43,9 @@ contract LinkFolio is ERC721 {
         address author;
     }
 
+    // profiles
     mapping(uint256 tokenId => Profile profile) public profiles;
     mapping(string handle => uint256 tokenId) public handleToTokenId;
-    mapping(string handle => bool isExists) public profileExists;
-
     // notes
     mapping(string handle => mapping(uint256 noteId => Note note))
         public notesByHandle;
@@ -50,9 +59,11 @@ contract LinkFolio is ERC721 {
         uint256 indexed tokenId,
         string name,
         string handle,
+        ProfileCategory category,
         string bio,
         string avatar,
         address owner,
+        address _eoa,
         string[] linkKeys,
         string[] links
     );
@@ -61,6 +72,7 @@ contract LinkFolio is ERC721 {
         uint256 indexed tokenId,
         string name,
         string handle,
+        ProfileCategory category,
         string bio,
         string avatar,
         address owner,
@@ -93,9 +105,11 @@ contract LinkFolio is ERC721 {
             _ownerOf(_tokenId) != address(0),
             "LinkFolio: Token doesnot exist"
         );
+        // profile owner or eoa can update/delete the profile
         require(
-            _ownerOf(_tokenId) == msg.sender,
-            "LinkFolio: only profile owner can perform this action"
+            _ownerOf(_tokenId) == msg.sender ||
+                profiles[_tokenId].owner == msg.sender,
+            "LinkFolio: only profile owner/eoa can perform this action"
         );
         _;
     }
@@ -103,51 +117,60 @@ contract LinkFolio is ERC721 {
     function createProfile(
         string memory _name,
         string memory _handle,
+        ProfileCategory _category,
         string memory _bio,
         string memory _avatar,
         string[] memory _linkKeys,
-        string[] memory _links
+        string[] memory _links,
+        address _eoa
     ) external {
         require(
             _linkKeys.length == _links.length,
             "LinkFolio: links and linkKeys length must match"
         );
-        require(!profileExists[_handle], "LinkFolio: handle is taken");
-        require(bytes(_handle).length > 0, "LinkFolio: handle cannot be empty");
+        require(handleToTokenId[_handle] == 0, "LinkFolio: handle is taken");
+        require(
+            bytes(_handle).length >= 3 && bytes(_handle).length <= 15,
+            "LinkFolio: handle must be between 3-15 characters"
+        );
         require(bytes(_name).length > 0, "LinkFolio: name cannot be empty");
 
-        profileExists[_handle] = true;
+        uint256 currentTokenId = nextTokenId++;
         handleToTokenId[_handle] = currentTokenId;
 
         Profile storage newProfile = profiles[currentTokenId];
         newProfile.tokenId = currentTokenId;
         newProfile.name = _name;
         newProfile.handle = _handle;
+        newProfile.category = _category;
         newProfile.bio = _bio;
         newProfile.avatar = _avatar;
         newProfile.linkKeys = _linkKeys;
         newProfile.owner = msg.sender;
+        newProfile._eoa = _eoa;
 
         for (uint256 i = 0; i < _linkKeys.length; i++) {
             newProfile.links[_linkKeys[i]] = _links[i];
         }
-        _safeMint(msg.sender, currentTokenId);
+        _safeMint(_eoa, currentTokenId);
         emit ProfileCreated(
             currentTokenId,
             _name,
             _handle,
+            _category,
             _bio,
             _avatar,
             msg.sender,
+            _eoa,
             _linkKeys,
             _links
         );
-        currentTokenId++;
     }
 
     function updateProfile(
         uint256 _tokenId,
         string memory _name,
+        ProfileCategory _category,
         string memory _bio,
         string memory _avatar,
         string[] memory _linkKeys,
@@ -160,6 +183,7 @@ contract LinkFolio is ERC721 {
 
         Profile storage profile = profiles[_tokenId];
         profile.name = _name;
+        profile.category = _category;
         profile.bio = _bio;
         profile.avatar = _avatar;
         profile.linkKeys = _linkKeys;
@@ -171,6 +195,7 @@ contract LinkFolio is ERC721 {
             _tokenId,
             _name,
             profile.handle,
+            _category,
             _bio,
             _avatar,
             msg.sender,
@@ -182,10 +207,7 @@ contract LinkFolio is ERC721 {
     function deleteProfile(
         uint256 _tokenId
     ) external onlyProfileOwner(_tokenId) {
-        Profile storage profile = profiles[_tokenId];
-        string memory handle = profile.handle;
-        profileExists[handle] = false;
-        // delete profileExists[handle];
+        string memory handle = profiles[_tokenId].handle;
         delete handleToTokenId[handle];
         delete profiles[_tokenId];
         _burn(_tokenId);
@@ -213,53 +235,12 @@ contract LinkFolio is ERC721 {
     ) external onlyProfileOwner(_tokenId) {
         string memory _handle = profiles[_tokenId].handle;
         require(
-            bytes(_content).length > 0,
-            "LinkFolio: content cannot be empty"
+            bytes(_content).length > 0 && bytes(_content).length <= 1000,
+            "LinkFolio: content must be between 1-1000 characters"
         );
         uint256 postId = profilePostCount[_tokenId]++;
         postsByHandle[_handle][postId] = Post(postId, _content, msg.sender);
         emit PostCreated(_tokenId, _handle, postId, _content, msg.sender);
-    }
-
-    function getProfileByHandle(
-        string memory _handle
-    )
-        public
-        view
-        returns (
-            uint256 tokenId,
-            string memory name,
-            string memory handle,
-            string memory bio,
-            string memory avatar,
-            address owner,
-            string[] memory linkKeys,
-            string[] memory links
-        )
-    {
-        tokenId = handleToTokenId[_handle];
-        require(
-            _ownerOf(tokenId) != address(0),
-            "LinkFolio: Profile not found by handle"
-        );
-        Profile storage profile = profiles[tokenId];
-        linkKeys = profile.linkKeys;
-        //  get links from mapping
-        links = new string[](linkKeys.length);
-        for (uint256 i = 0; i < linkKeys.length; i++) {
-            links[i] = profile.links[linkKeys[i]];
-        }
-
-        return (
-            tokenId,
-            profile.name,
-            profile.handle,
-            profile.bio,
-            profile.avatar,
-            profile.owner,
-            linkKeys,
-            links
-        );
     }
 
     // override to prevent transfers
@@ -291,9 +272,10 @@ contract LinkFolio is ERC721 {
     ) internal view returns (string memory) {
         Profile storage profile = profiles[tokenId];
 
+        string memory category = categoryToString(profile.category);
         // Initialize attributes array with fixed attributes
         bytes[] memory attributesArray = new bytes[](
-            profile.linkKeys.length + 4
+            profile.linkKeys.length + 5
         );
         attributesArray[0] = abi.encodePacked(
             '{"trait_type":"name", "value":"',
@@ -315,6 +297,11 @@ contract LinkFolio is ERC721 {
             tokenId.toString(),
             '"}'
         );
+        attributesArray[4] = abi.encodePacked(
+            '{"trait_type":"category", "value":"',
+            category,
+            '"}'
+        );
 
         // Add links as additional attributes to the attributes array
         for (uint256 i = 0; i < profile.linkKeys.length; i++) {
@@ -328,7 +315,7 @@ contract LinkFolio is ERC721 {
                     value,
                     '"}'
                 );
-                attributesArray[i + 4] = linkAttribute;
+                attributesArray[i + 5] = linkAttribute;
             }
         }
 
@@ -374,5 +361,15 @@ contract LinkFolio is ERC721 {
             output = abi.encodePacked(output, delimiter, parts[i]);
         }
         return output;
+    }
+
+    // category enum to string conversion
+    function categoryToString(
+        ProfileCategory category
+    ) internal pure returns (string memory) {
+        if (category == ProfileCategory.Personal) return "Personal";
+        if (category == ProfileCategory.Creator) return "Creator";
+        if (category == ProfileCategory.Business) return "Business";
+        return "Unknown";
     }
 }

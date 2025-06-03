@@ -7,7 +7,11 @@ const { Header, Footer, Content } = Layout;
 
 export default function SiteLayout({ children }) {
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout
+      style={{
+        minHeight: "100vh"
+      }}
+    >
       <Header
         style={{
           position: "sticky",
@@ -47,8 +51,8 @@ export default function SiteLayout({ children }) {
       >
         {children}
       </Content>
-      <Divider plain />
       <Footer style={{ textAlign: "center" }}>
+        <Divider />
         <a
           href="https://github.com/Salmandabbakuti"
           target="_blank"
@@ -56,7 +60,7 @@ export default function SiteLayout({ children }) {
         >
           ©{new Date().getFullYear()} LinkFolio. Powered by NERO Chain & Reown
         </a>
-        <p style={{ fontSize: "12px" }}>v0.2.1</p>
+        <p style={{ fontSize: "12px" }}>v0.3.0</p>
       </Footer>
     </Layout>
   );

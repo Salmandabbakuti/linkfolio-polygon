@@ -10,6 +10,7 @@ type Profile @entity(immutable: false) {
   tokenId: BigInt!
   name: String!
   handle: String!
+  category: String!
   bio: String
   avatar: String
   linkKeys: [String!]!

@@ -10,7 +10,7 @@
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 linkfolio-nero",
     "create-remote": "graph create --node http://subgraph.testnet.nero.metaborong.com:8020 linkfolio-nero",
     "remove-remote": "graph remove --node http://subgraph.testnet.nero.metaborong.com:8020 linkfolio-nero",
-    "deploy-remote": "graph deploy --node http://subgraph.testnet.nero.metaborong.com:8020 --ipfs https://ipfs.network.thegraph.com linkfolio-nero --version-label 0.2.0",
+    "deploy-remote": "graph deploy --node http://subgraph.testnet.nero.metaborong.com:8020 --ipfs https://ipfs.network.thegraph.com linkfolio-nero --version-label 0.3.5",
     "test": "graph test"
   },
   "dependencies": {

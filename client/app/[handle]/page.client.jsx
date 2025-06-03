@@ -12,7 +12,13 @@ import {
   Space,
   Popconfirm,
   Card,
-  List
+  Row,
+  Col,
+  Typography,
+  Divider,
+  Spin,
+  Tabs,
+  Select
 } from "antd";
 import {
   GlobalOutlined,
@@ -22,7 +28,9 @@ import {
   ShareAltOutlined,
   ArrowRightOutlined,
   ExportOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
+  SyncOutlined,
+  LoadingOutlined
 } from "@ant-design/icons";
 import {
   useAppKitProvider,
@@ -40,6 +48,10 @@ import {
 import { LINKFOLIO_CONTRACT_ADDRESS } from "@/app/utils/constants";
 import { executeOperation, getAAWalletAddress } from "@/app/utils/aaUtils";
 
+const { Title, Text } = Typography;
+
+const categoryArr = ["Personal", "Creator", "Business"];
+
 export default function Profile({ params }) {
   // State
   const [profile, setProfile] = useState(null);
@@ -51,6 +63,7 @@ export default function Profile({ params }) {
     write: false
   });
   const [aaWalletAddress, setAAWalletAddress] = useState(null);
+  const [selectedSocials, setSelectedSocials] = useState([]);
 
   const { handle } = use(params);
   const router = useRouter();
@@ -64,6 +77,7 @@ export default function Profile({ params }) {
   const initialValues = {
     name: "",
     handle,
+    category: "Personal", // Default to Personal
     bio: "",
     avatar: "",
     links: {}
@@ -82,6 +96,15 @@ export default function Profile({ params }) {
     resolveAAWalletAddress();
   }, [walletProvider]);
 
+  // On edit mode, preselect socials with existing links
+  useEffect(() => {
+    if (mode === "edit" && profile?.links) {
+      setSelectedSocials(
+        Object.keys(profile.links).filter((k) => profile.links[k])
+      );
+    }
+  }, [mode, profile]);
+
   const resolveAAWalletAddress = async () => {
     if (!walletProvider) return;
     try {
@@ -99,7 +122,7 @@ export default function Profile({ params }) {
 
   // Functions
   const fetchProfile = async () => {
-    setLoading({ read: true });
+    setLoading({ ...loading, read: true });
     client
       .request(GET_PROFILE_QUERY, {
         id: handle,
@@ -140,7 +163,7 @@ export default function Profile({ params }) {
         console.error("Failed to fetch profile:", err);
         message.error("Failed to fetch profile. Please try again.");
       })
-      .finally(() => setLoading({ read: false }));
+      .finally(() => setLoading({ ...loading, read: false }));
   };
 
   const onFinish = async (dataObj) => {
@@ -148,7 +171,8 @@ export default function Profile({ params }) {
     if (selectedNetworkId !== "eip155:689")
       return message.error("Please switch to NERO Testnet");
     const tokenId = profile?.id;
-    setLoading({ write: true });
+    setLoading({ ...loading, write: true });
+    const categoryVal = categoryArr.indexOf(dataObj?.category);
     try {
       // if avatar file is present, upload it to IPFS
       if (avatarFile) {
@@ -162,7 +186,8 @@ export default function Profile({ params }) {
 
       // clean & parse links as arrays of keys and links from key value pairs for contract function input
       // we need to remove empty or undefined links as form item make keys undefined if not filled and contract wont accept it
-      const cleanedLinksObj = Object.entries(dataObj.links).reduce(
+      const linksObj = dataObj.links || {}; // if no links selected, use empty object. sothat keys, links are empty arrays
+      const cleanedLinksObj = Object.entries(linksObj).reduce(
         (acc, [key, value]) => {
           if (value) {
             acc[key] = value;
@@ -176,25 +201,62 @@ export default function Profile({ params }) {
       // get signer
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
-      console.log("create/update data:", { ...dataObj, linkKeys, links });
+      console.log("create/update data:", {
+        ...dataObj,
+        category: categoryVal,
+        linkKeys,
+        links
+      });
       if (!tokenId) {
         const createOpTx = await executeOperation(
           signer,
           linkFolioContract.target,
           "createProfile",
-          [dataObj.name, handle, dataObj.bio, dataObj.avatar, linkKeys, links]
+          [
+            dataObj.name,
+            handle,
+            categoryVal,
+            dataObj.bio,
+            dataObj.avatar,
+            linkKeys,
+            links,
+            account
+          ]
         );
         console.log("Create Profile Tx:", createOpTx);
-        return message.success("Profile created successfully!");
+        message.success(
+          "Profile created successfully. Redirecting in a few..."
+        );
+        // fetchProfile in 5 seconds to get the new profile
+        setTimeout(() => {
+          fetchProfile();
+          setMode("view");
+        }, 5000);
+        return;
       }
       const updateOpTx = await executeOperation(
         signer,
         LINKFOLIO_CONTRACT_ADDRESS,
         "updateProfile",
-        [tokenId, dataObj.name, dataObj.bio, dataObj.avatar, linkKeys, links]
+        [
+          tokenId,
+          dataObj.name,
+          categoryVal,
+          dataObj.bio,
+          dataObj.avatar,
+          linkKeys,
+          links
+        ]
       );
       console.log("Update Profile Tx:", updateOpTx);
-      message.success("Profile updated successfully!");
+      message.success(
+        "Profile updated successfully. Redirecting to view mode in a few..."
+      );
+      // fetchProfile in 5 seconds to get the updated profile
+      setTimeout(() => {
+        fetchProfile();
+        setMode("view");
+      }, 5000);
     } catch (err) {
       console.error("Failed to create/update profile:", err);
       message.error(
@@ -203,7 +265,7 @@ export default function Profile({ params }) {
         }`
       );
     } finally {
-      setLoading({ write: false });
+      setLoading({ ...loading, write: false });
     }
   };
 
@@ -212,7 +274,7 @@ export default function Profile({ params }) {
     if (!account) return message.error("Please connect your wallet first");
     if (selectedNetworkId !== "eip155:689")
       return message.error("Please switch to Polygon Amoy Testnet");
-    setLoading({ write: true });
+    setLoading({ ...loading, write: true });
     try {
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
@@ -233,137 +295,276 @@ export default function Profile({ params }) {
         }`
       );
     } finally {
-      setLoading({ write: false });
+      setLoading({ ...loading, write: false });
     }
   };
 
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto" }}>
       {mode === "edit" ? (
-        <Card
-          title={profile?.id ? "Edit Profile" : "Create Profile"}
-          variant="outlined"
-          loading={loading?.read}
-          extra={
-            <Space>
-              <Button
-                title="Preview"
-                shape="circle"
-                icon={<EyeOutlined />}
-                onClick={() => setMode("preview")}
-              />
-              {isProfileOwner && (
-                <Popconfirm
-                  title="Are you sure you want to delete this profile?"
-                  onConfirm={handleDeleteProfile}
+        <Tabs
+          defaultActiveKey="profile"
+          // tabPosition="left"
+          animated
+          // centered
+          items={[
+            {
+              key: "profile",
+              label: "Profile",
+              children: (
+                <Card
+                  title={profile?.id ? "Edit Profile" : "Create Profile"}
+                  variant="outlined"
+                  loading={loading?.read}
+                  extra={
+                    <Space>
+                      <Button
+                        title="Preview"
+                        shape="circle"
+                        icon={<EyeOutlined />}
+                        onClick={() => setMode("preview")}
+                      />
+                      {isProfileOwner && (
+                        <Popconfirm
+                          title="Are you sure you want to delete this profile?"
+                          onConfirm={handleDeleteProfile}
+                        >
+                          <Button
+                            title="Delete Profile"
+                            type="primary"
+                            shape="circle"
+                            danger
+                            icon={<DeleteOutlined />}
+                          />
+                        </Popconfirm>
+                      )}
+                    </Space>
+                  }
                 >
-                  <Button
-                    title="Delete Profile"
-                    type="primary"
-                    shape="circle"
-                    danger
-                    icon={<DeleteOutlined />}
-                  />
-                </Popconfirm>
-              )}
-            </Space>
-          }
-        >
-          <Form
-            form={formData}
-            onFinish={onFinish}
-            initialValues={initialValues}
-            layout="vertical"
-            requiredMark
-          >
-            <Form.Item label="Avatar" name="avatar">
-              <Upload
-                name="avatar"
-                multiple={false}
-                showUploadList
-                listType="picture-circle"
-                fileList={avatarFile ? [avatarFile] : []}
-                accept="image/*"
-                maxCount={1}
-                beforeUpload={() => false}
-                onChange={({ fileList }) => {
-                  console.log("Avatar changed", fileList[0]);
-                  const file = fileList[0];
-                  if (!file) {
-                    setAvatarFile(null);
-                    return;
-                  }
-                  if (
-                    !file?.type?.startsWith("image/") ||
-                    file?.size > 300000
-                  ) {
-                    return message.error(
-                      "Invalid file type or size (Max 300KB)"
-                    );
-                  }
-                  setAvatarFile(file);
-                }}
-              >
-                {avatarFile ? null : (
-                  <Avatar
-                    src={
-                      profile?.avatar ||
-                      `https://api.dicebear.com/5.x/open-peeps/svg?seed=${handle}`
-                    }
-                    alt="Profile"
-                    size={100}
-                    shape="circle"
-                  />
-                )}
-              </Upload>
-            </Form.Item>
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: true, message: "Please enter your name" }]}
-            >
-              <Input required />
-            </Form.Item>
-            <Form.Item
-              label="Handle"
-              name="handle"
-              rules={[{ required: true, message: "Please enter your handle" }]}
-            >
-              <Input readOnly required />
-            </Form.Item>
-            <Form.Item label="Bio" name="bio">
-              <Input.TextArea />
-            </Form.Item>
-            {supportedSocials.map((social) => (
-              <Form.Item
-                key={social.id}
-                label={social.name}
-                name={["links", social.name.toLowerCase()]}
-                defaultValue=""
-              >
-                <Input
-                  addonBefore={social?.icon || <GlobalOutlined />}
-                  placeholder={`Enter your ${social.name} profile link`}
-                />
-              </Form.Item>
-            ))}
-            <Space>
-              <Link href="/">
-                <Button shape="round">Back</Button>
-              </Link>
-              <Button
-                type="primary"
-                shape="round"
-                htmlType="submit"
-                loading={loading?.write}
-              >
-                Save
-              </Button>
-            </Space>
-          </Form>
-        </Card>
+                  <Form
+                    form={formData}
+                    onFinish={onFinish}
+                    initialValues={initialValues}
+                    layout="vertical"
+                    // size="large"
+                    requiredMark
+                  >
+                    <Spin
+                      spinning={loading?.write}
+                      size="large"
+                      tip="Transaction in progress..."
+                      indicator={<LoadingOutlined spin />}
+                    >
+                      <Row gutter={16}>
+                        <Col xs={24} lg={12}>
+                          <Form.Item
+                            label="Avatar"
+                            name="avatar"
+                            hasFeedback
+                            help="Recommended 78x78, Max: 300KB"
+                          >
+                            <Upload
+                              name="avatar"
+                              multiple={false}
+                              showUploadList
+                              listType="picture-circle"
+                              fileList={avatarFile ? [avatarFile] : []}
+                              accept="image/*"
+                              maxCount={1}
+                              beforeUpload={() => false}
+                              onChange={({ fileList }) => {
+                                console.log("Avatar changed", fileList[0]);
+                                const file = fileList[0];
+                                if (!file) {
+                                  setAvatarFile(null);
+                                  return;
+                                }
+                                if (
+                                  !file?.type?.startsWith("image/") ||
+                                  file?.size > 300000
+                                ) {
+                                  return message.error(
+                                    "Invalid file type or size (Max 300KB)"
+                                  );
+                                }
+                                setAvatarFile(file);
+                              }}
+                            >
+                              {avatarFile ? null : (
+                                <Avatar
+                                  src={
+                                    profile?.avatar ||
+                                    `https://api.dicebear.com/5.x/open-peeps/svg?seed=${handle}`
+                                  }
+                                  alt="Profile"
+                                  size={100}
+                                  shape="circle"
+                                />
+                              )}
+                            </Upload>
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} lg={12}>
+                          <Form.Item
+                            label="Name"
+                            name="name"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter your name"
+                              }
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <Form.Item
+                            label="Handle"
+                            name="handle"
+                            hasFeedback
+                            help="Your unique handle, cannot be changed."
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter your handle"
+                              }
+                            ]}
+                          >
+                            <Input readOnly />
+                          </Form.Item>
+                          <Form.Item
+                            label="Category"
+                            name="category"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a category"
+                              }
+                            ]}
+                          >
+                            <Select
+                              placeholder="Select profile category"
+                              options={[
+                                { label: "Personal", value: "Personal" },
+                                { label: "Creator", value: "Creator" },
+                                { label: "Business", value: "Business" }
+                              ]}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
+                      <Row gutter={16}>
+                        <Col xs={24} lg={24}>
+                          <Form.Item label="Bio" name="bio">
+                            <Input.TextArea />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
+                      <Divider>
+                        <Title level={5}>Social Links</Title>
+                      </Divider>
+                      <Typography.Paragraph
+                        type="secondary"
+                        style={{ marginBottom: "10px" }}
+                      >
+                        Select the social platforms to include links in your
+                        profile. Click to add or remove them.
+                      </Typography.Paragraph>
+                      <Row gutter={16} style={{ marginBottom: 16 }}>
+                        <Col span={24}>
+                          <Space wrap>
+                            {supportedSocials.map((social) => (
+                              <Button
+                                key={social.id}
+                                type={
+                                  selectedSocials.includes(
+                                    social.name.toLowerCase()
+                                  )
+                                    ? "primary"
+                                    : "default"
+                                }
+                                icon={social.icon || <GlobalOutlined />}
+                                shape="round"
+                                onClick={() => {
+                                  setSelectedSocials((prev) =>
+                                    prev.includes(social.name.toLowerCase())
+                                      ? prev.filter(
+                                          (s) => s !== social.name.toLowerCase()
+                                        )
+                                      : [...prev, social.name.toLowerCase()]
+                                  );
+                                }}
+                              >
+                                {social.name}
+                              </Button>
+                            ))}
+                          </Space>
+                        </Col>
+                      </Row>
+                      <Row gutter={16}>
+                        {selectedSocials.map((socialKey) => {
+                          const social = supportedSocials.find(
+                            (s) => s.name.toLowerCase() === socialKey
+                          );
+                          return (
+                            <Col xs={24} lg={12} key={socialKey}>
+                              <Form.Item
+                                label={social.name}
+                                name={["links", socialKey]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `Please enter your ${social.name} profile link`
+                                  }
+                                ]}
+                              >
+                                <Input
+                                  addonBefore={
+                                    social.icon || <GlobalOutlined />
+                                  }
+                                  placeholder={`Enter your ${social.name} profile link`}
+                                />
+                              </Form.Item>
+                            </Col>
+                          );
+                        })}
+                      </Row>
+
+                      <Space>
+                        <Button shape="round" onClick={() => setMode("view")}>
+                          Back
+                        </Button>
+                        <Button
+                          type="primary"
+                          shape="round"
+                          htmlType="submit"
+                          loading={loading?.write}
+                        >
+                          Save
+                        </Button>
+                      </Space>
+                    </Spin>
+                  </Form>
+                </Card>
+              )
+            },
+            {
+              key: "Appearance",
+              label: "Appearance",
+              children: (
+                <Card title="Coming Soon" variant="outlined">
+                  <Text type="secondary">
+                    We are working on custom themes and appearance settings.
+                    Stay tuned!
+                  </Text>
+                </Card>
+              )
+            }
+          ]}
+        />
       ) : (
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+        <>
           <Card
             title={
               mode === "preview" ? (
@@ -408,23 +609,27 @@ export default function Profile({ params }) {
                   <Button
                     title="Edit Profile"
                     shape="circle"
+                    type="primary"
                     icon={<EditOutlined />}
                     onClick={() => setMode("edit")}
                   />
                 )}
                 {profile?.id && (
                   <Space>
-                    <a
+                    <Button
+                      title="Refresh"
+                      shape="circle"
+                      icon={<SyncOutlined spin={loading?.read} />}
+                      onClick={fetchProfile}
+                    />
+                    <Button
+                      title="View on Explorer"
+                      shape="circle"
+                      icon={<ExportOutlined />}
                       href={`https://testnet.neroscan.io/token/${LINKFOLIO_CONTRACT_ADDRESS}?a=${profile?.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                    >
-                      <Button
-                        title="View on Opensea"
-                        shape="circle"
-                        icon={<ExportOutlined />}
-                      />
-                    </a>
+                    />
                     <Button
                       title="Share Profile"
                       shape="circle"
@@ -490,7 +695,7 @@ export default function Profile({ params }) {
               <ArrowRightOutlined />
             </Button>
           </Link>
-        </div>
+        </>
       )}
     </div>
   );

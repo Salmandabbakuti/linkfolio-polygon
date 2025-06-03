@@ -1,119 +1,84 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  Typography,
-  Input,
   Button,
-  Space,
-  message,
-  Divider,
-  List,
-  Select,
+  Typography,
   Card,
-  Avatar
+  Row,
+  Col,
+  Space,
+  Divider,
+  Carousel,
+  Input,
+  message
 } from "antd";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
-import { BrowserProvider } from "ethers";
-import {
-  linkFolioContract,
-  subgraphClient as client,
-  GET_PROFILES_QUERY
-} from "@/app/utils";
-import { getAAWalletAddress } from "@/app/utils/aaUtils";
+import { useRouter } from "next/navigation";
+import { linkFolioContract } from "@/app/utils";
 
 const { Title, Paragraph } = Typography;
-const { Search } = Input;
-const { Option } = Select;
-import { SyncOutlined } from "@ant-design/icons";
+
+const howItWorksSteps = [
+  { icon: "🔐", step: "Connect your wallet" },
+  { icon: "🎨", step: "Pick a template" },
+  { icon: "🔗", step: "Add your links" },
+  { icon: "🚀", step: "Publish & share" },
+  { icon: "📝", step: "Leave notes & messages" },
+  { icon: "📢", step: "Share posts & announcements" }
+];
+
+const features = [
+  {
+    icon: "🎨",
+    title: "Customizable Profiles",
+    description:
+      "Personalize your profile with a bio, avatar, and custom links."
+  },
+  {
+    icon: "🔗",
+    title: "Soulbound NFTs",
+    description:
+      "Each profile is minted as a unique, non-transferrable NFT for true ownership and authenticity."
+  },
+  {
+    icon: "🗄️",
+    title: "On-chain Metadata",
+    description:
+      "Store profile data directly on-chain for integrity and immutability."
+  },
+  {
+    icon: "⛽️",
+    title: "Gasless Experience",
+    description:
+      "Powered by NERO Chain Paymaster, interact without paying gas fees using ETH or stablecoins."
+  },
+  {
+    icon: "📝",
+    title: "Notes for Profiles",
+    description:
+      "Let community members leave quick thoughts or messages on your profile."
+  },
+  {
+    icon: "📢",
+    title: "Posts & Announcements",
+    description: "Share updates or announcements directly with your audience."
+  },
+  {
+    icon: "🧩",
+    title: "Native Account Abstraction",
+    description:
+      "Streamlined wallet interactions and enhanced UX via smart contract-based wallets."
+  }
+];
 
 export default function Home() {
   const [handle, setHandle] = useState("");
   const [loading, setLoading] = useState(false);
-  const [dataLoading, setDataLoading] = useState(false);
-  const [profiles, setProfiles] = useState([]);
-  const [showMyProfiles, setShowMyProfiles] = useState(false);
-  const [aaWalletAddress, setAAWalletAddress] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-
   const router = useRouter();
-
-  const { address: account } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider("eip155");
 
   const handleInputChange = (e) => {
     setHandle(e.target.value);
   };
-
-  const fetchProfiles = () => {
-    setDataLoading(true);
-    client
-      .request(GET_PROFILES_QUERY, {
-        first: 30,
-        skip: 0,
-        orderBy: "createdAt",
-        orderDirection: "desc",
-        where: {
-          and: [
-            { owner: showMyProfiles ? aaWalletAddress : undefined },
-            ...(searchQuery
-              ? [
-                  {
-                    or: [
-                      {
-                        name_contains_nocase: searchQuery
-                      },
-                      {
-                        handle_contains_nocase: searchQuery
-                      },
-                      {
-                        bio_contains_nocase: searchQuery
-                      },
-                      {
-                        owner_contains_nocase: searchQuery
-                      }
-                    ]
-                  }
-                ]
-              : [])
-          ]
-        }
-      })
-      .then((data) => {
-        console.log("Profiles fetched", data?.profiles);
-        setProfiles(data?.profiles || []);
-      })
-      .catch((err) => {
-        console.error("Error while fetching profiles", err);
-        message.error("Something went wrong. Please try again!");
-      })
-      .finally(() => {
-        setDataLoading(false);
-      });
-  };
-
-  const resolveAAWalletAddress = async () => {
-    if (!walletProvider) return;
-    try {
-      const ethersProvider = new BrowserProvider(walletProvider);
-      const signer = await ethersProvider.getSigner();
-      const aaWalletAddress = await getAAWalletAddress(signer);
-      console.log(
-        `Resolved AA Wallet Address for account ${account}: ${aaWalletAddress}`
-      );
-      setAAWalletAddress(aaWalletAddress?.toLowerCase());
-    } catch (err) {
-      console.error("Error resolving AA Wallet Address:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchProfiles();
-    if (account) {
-      resolveAAWalletAddress();
-    }
-  }, [showMyProfiles, account]);
 
   const handleClaim = async () => {
     // handle length should be between 3 and 15 characters
@@ -125,11 +90,14 @@ export default function Home() {
     }
     setLoading(true);
     try {
-      const handleExists = await linkFolioContract.profileExists(handle);
-      if (handleExists)
+      const handleTokenId = await linkFolioContract.handleToTokenId(handle);
+      console.log("Claiming handle token ID", handleTokenId);
+      // if handleTokenId is not 0n, it means the handle is already taken
+      if (handleTokenId !== 0n) {
         return message.error(
           `${handle} is already taken. Please try another one.`
         );
+      }
       router.push(`/${handle}?mode=claim`);
     } catch (err) {
       console.error("Error while checking handle availability", err);
@@ -140,115 +108,198 @@ export default function Home() {
       setLoading(false);
     }
   };
-
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <Title level={2}>Own Your Digital Identity. Forever.</Title>
-      <Paragraph>
-        Join LinkFolio! Your decentralized, portable, and ownable Link Hub.
-        Seamlessly share your creations across Instagram, TikTok, Twitter,
-        YouTube, and beyond—all with one simple link.
-      </Paragraph>
-      <Space.Compact>
-        <Input
-          size="large"
-          placeholder="Enter your handle"
-          value={handle}
-          onChange={handleInputChange}
-          prefix="link.fo/"
-        />
-        <Button
-          type="primary"
-          size="large"
-          shape="round"
-          loading={loading}
-          onClick={handleClaim}
-        >
-          Claim
-        </Button>
-      </Space.Compact>
-      <Divider />
-      <div style={{ marginTop: "20px" }}>
-        <Title level={2}>Discover</Title>
-        <Paragraph type="secondary">
-          Explore amazing profiles from our community
-        </Paragraph>
-        <Space style={{ marginBottom: "20px" }}>
-          <Search
-            size="default"
-            allowClear
-            placeholder="Search profiles"
-            onSearch={fetchProfiles}
-            onPressEnter={fetchProfiles}
-            enterButton
-            loading={dataLoading}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: "300px" }}
-          />
-
-          <label>Owned by:</label>
-          <Select
-            style={{ width: 120 }}
-            defaultValue={false}
-            onChange={(value) => {
-              setShowMyProfiles(value);
-            }}
-          >
-            <Option value={false}>All</Option>
-            <Option value={true} disabled={!account}>
-              Me
-            </Option>
-          </Select>
-          <Button
-            type="primary"
-            shape="circle"
-            icon={<SyncOutlined spin={dataLoading} />}
-            onClick={fetchProfiles}
-          />
-        </Space>
-        <List
-          grid={{
-            xs: 1,
-            gutter: 16
-          }}
-          dataSource={profiles}
-          loading={dataLoading}
-          itemLayout="vertical"
-          renderItem={(item) => (
-            <List.Item>
-              <Card
-                hoverable
-                variant="bordered"
-                style={{
-                  width: 340,
-                  textAlign: "center",
-                  borderRadius: "10px",
-                  padding: "10px"
-                  // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-                }}
-                actions={[
-                  <Link href={`/${item?.handle}`}>
-                    <Button variant="outlined" color="primary" shape="round">
-                      View Profile
-                    </Button>
-                  </Link>
-                ]}
-              >
-                <Avatar
-                  src={`https://api.dicebear.com/5.x/open-peeps/svg?seed=${item?.handle}`}
-                  alt="avatar"
-                  size={100}
-                  shape="circle"
-                  style={{ border: "1px solid grey" }}
+    <div
+      style={{
+        minHeight: "100vh",
+        padding: 0
+      }}
+    >
+      {/* Hero Section */}
+      <div
+        style={{
+          maxWidth: 1500,
+          margin: "0 auto"
+          // padding: "64px 16px 32px 16px"
+        }}
+      >
+        <Row gutter={[48, 24]} align="middle" justify="center">
+          {/* Left: Title, Description, Input */}
+          <Col xs={24} md={12}>
+            <Title
+              level={1}
+              style={{
+                fontWeight: 800,
+                fontSize: 48,
+                marginBottom: 16,
+                textAlign: "left"
+              }}
+            >
+              Own Your Digital Identity. Forever.
+            </Title>
+            <Paragraph
+              style={{
+                fontSize: 20,
+                color: "#555",
+                margin: "0 0 32px 0",
+                textAlign: "left"
+              }}
+            >
+              Join LinkFolio! Your decentralized, portable, and ownable Link
+              Hub. Seamlessly share your creations across Instagram, TikTok,
+              Twitter, YouTube, and beyond—all with one simple link.
+            </Paragraph>
+            <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+              <Space.Compact>
+                <Input
+                  size="large"
+                  placeholder="Enter your handle"
+                  value={handle}
+                  onChange={handleInputChange}
+                  prefix="link.fo/"
                 />
+                <Button
+                  type="primary"
+                  size="large"
+                  shape="round"
+                  loading={loading}
+                  onClick={handleClaim}
+                >
+                  Claim
+                </Button>
+              </Space.Compact>
+              <Link href="/explore">
+                <Button size="large" shape="round" style={{ fontWeight: 600 }}>
+                  Explore
+                </Button>
+              </Link>
+            </div>
+          </Col>
+          {/* Right: Carousel */}
+          <Col xs={24} md={12}>
+            <Carousel
+              dots
+              autoplay
+              dotPosition="top"
+              style={{ borderRadius: "10px" }}
+            >
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Card
+                  key={index}
+                  variant="outlined"
+                  hoverable
+                  style={{ height: 100, borderRadius: 18 }}
+                  cover={
+                    <img
+                      alt="example"
+                      src={`https://picsum.photos/seed/${index}/800/400`}
+                    />
+                  }
+                >
+                  <Card.Meta
+                    title="Europe Street beat"
+                    description="www.instagram.com"
+                  />
+                </Card>
+              ))}
+            </Carousel>
+          </Col>
+        </Row>
+      </div>
+      <Divider />
 
-                <h3>{item?.name}</h3>
-                <p>@{item?.handle}</p>
-                <p>{item?.bio}</p>
+      {/* Features Section */}
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: "0 auto",
+          padding: "32px 16px 0 16px"
+        }}
+      >
+        <Title
+          level={2}
+          style={{ textAlign: "center", fontWeight: 700, marginBottom: 32 }}
+        >
+          Powerful Features
+        </Title>
+        <Row gutter={[32, 32]} justify="center">
+          {features.map((feature, index) => (
+            <Col xs={24} sm={12} md={12} lg={6} key={index}>
+              <Card
+                variant="outlined"
+                hoverable
+                style={{
+                  borderRadius: 18,
+                  minHeight: 180,
+                  boxShadow: "0 2px 16px #6366f111",
+                  textAlign: "center",
+                  background: "#fff"
+                }}
+              >
+                <div style={{ fontSize: 36, marginBottom: 12 }}>
+                  {feature.icon}
+                </div>
+                <Title level={4} style={{ marginBottom: 8 }}>
+                  {feature.title}
+                </Title>
+                <Paragraph style={{ color: "#666" }}>
+                  {feature.description}
+                </Paragraph>
               </Card>
-            </List.Item>
-          )}
-        />
+            </Col>
+          ))}
+        </Row>
+      </div>
+      <Divider />
+
+      {/* How It Works Section */}
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: "0 auto",
+          padding: "64px 16px 0 16px"
+        }}
+      >
+        <Title
+          level={2}
+          style={{
+            textAlign: "center",
+            fontWeight: 700,
+            marginBottom: 32
+          }}
+        >
+          How It Works
+        </Title>
+        <Row gutter={[24, 24]} justify="center">
+          {howItWorksSteps.map((item, idx) => (
+            <Col xs={24} sm={12} md={6} key={idx}>
+              <Card
+                variant="outlined"
+                style={{
+                  borderRadius: 18,
+                  minHeight: 140,
+                  textAlign: "center",
+                  background: "#f8fafc"
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 32,
+                    marginBottom: 10
+                  }}
+                >
+                  {item.icon}
+                </div>
+                <Title level={4} style={{ marginBottom: 6 }}>
+                  Step {idx + 1}
+                </Title>
+                <Paragraph style={{ color: "#555", fontSize: 16 }}>
+                  {item.step}
+                </Paragraph>
+              </Card>
+            </Col>
+          ))}
+        </Row>
       </div>
     </div>
   );

@@ -4,30 +4,36 @@ import { linkFolioContract } from "@/app/utils";
 export const revalidate = 60;
 export async function generateMetadata({ params }) {
   const { handle } = await params;
-  console.log("Generating metadata for handle:", handle);
-  const profile = await linkFolioContract
-    .getProfileByHandle(handle)
-    .catch((err) =>
-      console.error(
-        `Failed to fetch profile for ${handle} in metadata generation:`,
-        err
-      )
-    );
 
-  const title = profile?.name || handle;
-  const description =
-    profile?.bio ||
-    "Create and own your digital identity as a soulbound NFT with on-chain metadata, gas-free via NERO Chain’s Paymaster and account abstraction.";
+  //  base metadata for the profile page
   const url = `https://linkfolio-nero.vercel.app/${handle}`;
-  const image = profile?.avatar;
   const siteName = "LinkFolio";
+  let title = handle;
+  let description =
+    "Create and own your digital identity as a soulbound NFT with on-chain metadata, gas-free via NERO Chain’s Paymaster and account abstraction.";
+  let image = null;
+
+  try {
+    const handleTokenId = await linkFolioContract.handleToTokenId(handle);
+    const profile = await linkFolioContract.profiles(handleTokenId);
+    if (profile && profile?.name) {
+      title = profile?.name;
+      description = profile?.bio || description;
+      image = profile?.avatar;
+    }
+  } catch (error) {
+    console.error(
+      "Error generating metadata. returning default metadata",
+      error
+    );
+  }
 
   return {
     title,
     description,
     category: "technology",
     openGraph: {
-      title: `${title} | LinkFolio`,
+      title: `${title} | ${siteName}`,
       description,
       type: "profile",
       url,
@@ -38,7 +44,7 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | LinkFolio`,
+      title: `${title} | ${siteName}`,
       description,
       images: image ? { url: image, width: 1200, height: 630, alt: handle } : {}
     },

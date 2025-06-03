@@ -39,7 +39,7 @@ In LinkFolio, I prioritize on-chain metadata to safeguard the integrity and perm
 
 ![Screen1](https://github.com/user-attachments/assets/a65575d9-44bd-47df-8f95-adb19e5866e3)
 
-**Contract Address:** [0xfaf07923e3ed82a432c7f7b2b6a976d0d38817fe](https://testnet.neroscan.io/address/0xfaf07923e3ed82a432c7f7b2b6a976d0d38817fe?tab=Transactions). Deployed on Nerochain Testnet.
+**Contract Address:** [0xb2eF0B385FcEE4a54F097c37761AAc4BB4D98C4A](https://testnet.neroscan.io/address/0xb2eF0B385FcEE4a54F097c37761AAc4BB4D98C4A?tab=Transactions). Deployed on Nerochain Testnet.
 
 ## Getting Started
 
@@ -74,6 +74,14 @@ where the user is prompted to sign a message to create a profile, post or note. 
 ![Discover-Screen](https://github.com/user-attachments/assets/099a6deb-014b-43ab-a71f-96b371ff2614)
 
 ### ChangeLog
+
+#### 0.3.0
+
+- Added profile category selection (Creator, Business, Personal) during onboarding.
+- Integrated loading spinner during transaction submission for better UX feedback. Redirections and messages post profile creation/updation.
+- Smoother profile creation/update (form improvements) flow – users now select social platforms first and then add their links.
+- Added separate explore page to discover profiles on the platform.
+- Revamped homepage layout and design for better first impressions and user experience.
 
 #### 0.2.0
 

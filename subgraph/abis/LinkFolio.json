@@ -22,6 +22,12 @@
       },
       {
         "indexed": false,
+        "internalType": "enum LinkFolio.ProfileCategory",
+        "name": "category",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
         "internalType": "string",
         "name": "bio",
         "type": "string"
@@ -36,6 +42,12 @@
         "indexed": false,
         "internalType": "address",
         "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_eoa",
         "type": "address"
       },
       {
@@ -93,6 +105,12 @@
         "internalType": "string",
         "name": "handle",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum LinkFolio.ProfileCategory",
+        "name": "category",
+        "type": "uint8"
       },
       {
         "indexed": false,
