@@ -21,7 +21,8 @@ import {
   Select,
   ColorPicker,
   InputNumber,
-  Collapse
+  Collapse,
+  Tag
 } from "antd";
 import {
   GlobalOutlined,
@@ -630,7 +631,19 @@ export default function Profile({ params }) {
                     },
                     {
                       key: "appearance",
-                      label: "Appearance",
+                      label: (
+                        <Typography.Text strong>
+                          Appearance{" "}
+                          <Tag
+                            color="success"
+                            style={{
+                              fontSize: "9px"
+                            }}
+                          >
+                            New
+                          </Tag>
+                        </Typography.Text>
+                      ),
                       children: (
                         <>
                           <Collapse
@@ -645,8 +658,17 @@ export default function Profile({ params }) {
                                 label: (
                                   <Space direction="vertical">
                                     <Typography.Text strong>
-                                      🎨 Quick Templates
+                                      🎨 Quick Templates{" "}
+                                      <Tag
+                                        color="success"
+                                        style={{
+                                          fontSize: "9px"
+                                        }}
+                                      >
+                                        New
+                                      </Tag>
                                     </Typography.Text>
+
                                     <Typography.Text type="secondary">
                                       Choose from our curated templates or
                                       customize your own style below.
@@ -1119,6 +1141,14 @@ export default function Profile({ params }) {
               title={
                 <>
                   Preview{" "}
+                  <Tag
+                    color="success"
+                    style={{
+                      fontSize: "9px"
+                    }}
+                  >
+                    New
+                  </Tag>
                   <ExclamationCircleOutlined
                     title="May contain unsaved changes"
                     style={{
