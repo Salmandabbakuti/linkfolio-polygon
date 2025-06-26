@@ -47,7 +47,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_eoa",
+        "name": "eoa",
         "type": "address"
       },
       {
@@ -61,6 +61,12 @@
         "internalType": "string[]",
         "name": "links",
         "type": "string[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "settingsHash",
+        "type": "string"
       }
     ],
     "name": "ProfileCreated",
@@ -141,6 +147,12 @@
         "internalType": "string[]",
         "name": "links",
         "type": "string[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "settingsHash",
+        "type": "string"
       }
     ],
     "name": "ProfileUpdated",
@@ -215,6 +227,12 @@
         "internalType": "address",
         "name": "author",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tipAmount",
+        "type": "uint256"
       }
     ],
     "name": "NoteLeft",

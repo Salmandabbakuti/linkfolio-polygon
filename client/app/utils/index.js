@@ -1,4 +1,5 @@
 import { Contract, JsonRpcProvider } from "ethers";
+import { defineChain } from "@reown/appkit/networks";
 import { GraphQLClient, gql } from "graphql-request";
 import {
   XOutlined,
@@ -29,16 +30,61 @@ export const supportedSocials = [
   { id: "other", name: "Other", icon: <GlobalOutlined /> }
 ];
 
-const linkFolioContractABI = [
-  "function createProfile(string _name, string _handle, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links, address _eoa)",
-  "function updateProfile(uint256 _tokenId, string _name, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links)",
-  "function deleteProfile(uint256 _tokenId)",
-  "function leaveNote(string _handle, string _content)",
-  "function createPost(uint256 _tokenId, string _content)",
-  "function profiles(uint256 tokenId) view returns (uint256 tokenId, string name, string handle, uint8 category, string bio, string avatar, address owner, address _eoa)",
-  "function handleToTokenId(string handle) view returns (uint256 tokenId)",
-  "function tokenURI(uint256 tokenId) view returns (string uri)"
-];
+export const DEFAULT_APPEARANCE_SETTINGS = {
+  fontFamily: "Inter, sans-serif",
+  fontSize: 16,
+  background: "#1F1A2D",
+  accentColor: "#1890FF",
+  cardStyle: "solid",
+  buttonShape: "pill",
+  linkStyle: "bold",
+  textColor: "#E8E8E8",
+  avatarShape: "circle",
+  banner: ""
+};
+
+// Define the Nero Testnet chain
+export const neroTestnetChain = defineChain({
+  id: 689,
+  caipNetworkId: "eip155:689",
+  chainNamespace: "eip155",
+  name: "Nero Testnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Nero",
+    symbol: "NERO"
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc-testnet.nerochain.io"],
+      webSocket: ["wss://rpc-testnet.nerochain.io"]
+    }
+  },
+  blockExplorers: {
+    default: { name: "Explorer", url: "https://testnet.neroscan.io" }
+  }
+});
+
+export const neroMainnetChain = defineChain({
+  id: 1689,
+  caipNetworkId: "eip155:1689",
+  chainNamespace: "eip155",
+  name: "Nero Mainnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Nero",
+    symbol: "NERO"
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc.nerochain.io"],
+      webSocket: ["wss://rpc.nerochain.io"]
+    }
+  },
+  blockExplorers: {
+    default: { name: "Explorer", url: "https://neroscan.io" }
+  }
+});
 
 // nero testnet provider
 const defaultProvider = new JsonRpcProvider(
@@ -48,6 +94,17 @@ const defaultProvider = new JsonRpcProvider(
     staticNetwork: true
   }
 );
+
+const linkFolioContractABI = [
+  "function createProfile(string _name, string _handle, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links, address _eoa, string _settingsHash)",
+  "function updateProfile(uint256 _tokenId, string _name, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links, string _settingsHash)",
+  "function deleteProfile(uint256 _tokenId)",
+  "function leaveNote(string _handle, string _content) payable",
+  "function createPost(uint256 _tokenId, string _content)",
+  "function profiles(uint256 tokenId) view returns (uint256 tokenId, string name, string handle, uint8 category, string bio, string avatar, address owner, address _eoa)",
+  "function handleToTokenId(string handle) view returns (uint256 tokenId)",
+  "function tokenURI(uint256 tokenId) view returns (string uri)"
+];
 
 export const linkFolioContract = new Contract(
   LINKFOLIO_CONTRACT_ADDRESS,
@@ -83,9 +140,11 @@ export const GET_PROFILES_QUERY = gql`
       category
       bio
       avatar
-      owner {
+      eoa {
         id
       }
+      tipAmount
+      owner
     }
   }
 `;
@@ -112,11 +171,14 @@ export const GET_PROFILE_QUERY = gql`
       category
       bio
       avatar
-      owner {
+      eoa {
         id
       }
+      owner
+      tipAmount
       linkKeys
       links
+      settingsHash
       notes(
         first: $notes_first
         skip: $notes_skip
@@ -127,6 +189,8 @@ export const GET_PROFILE_QUERY = gql`
         id
         content
         author
+        tipAmount
+        txHash
         createdAt
       }
       posts(

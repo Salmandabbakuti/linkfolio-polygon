@@ -1,4 +1,4 @@
-import { store } from "@graphprotocol/graph-ts";
+import { BigInt as GraphBigInt, store } from "@graphprotocol/graph-ts";
 import {
   ProfileCreated as ProfileCreatedEvent,
   ProfileUpdated as ProfileUpdatedEvent,
@@ -9,17 +9,20 @@ import {
 import { User, Profile, Note, Post } from "../generated/schema";
 
 const ProfileCategories = ["Personal", "Creator", "Business"];
+const ZERO_BI = GraphBigInt.fromI32(0);
 
 export function handleProfileCreated(event: ProfileCreatedEvent): void {
   const blockTimestamp = event.block.timestamp;
   const tokenId = event.params.tokenId;
   const owner = event.params.owner;
+  const eoa = event.params.eoa;
   const handle = event.params.handle;
-  // Create user if not exists
-  let user = User.load(owner.toHex());
+  // Create user if not exists with eoa as id
+  let user = User.load(eoa.toHex());
   if (user == null) {
-    user = new User(owner.toHex());
-    user.address = owner.toHex();
+    user = new User(eoa.toHex());
+    user.address = eoa.toHex();
+    user.scw = owner; // smart account address
     user.createdAt = blockTimestamp;
     user.save();
   }
@@ -32,9 +35,12 @@ export function handleProfileCreated(event: ProfileCreatedEvent): void {
   profile.category = ProfileCategories[event.params.category];
   profile.bio = event.params.bio;
   profile.avatar = event.params.avatar;
-  profile.owner = owner.toHex();
+  profile.owner = owner;
+  profile.eoa = eoa.toHex();
+  profile.tipAmount = ZERO_BI; // Initialize tip amount to zero
   profile.linkKeys = event.params.linkKeys;
   profile.links = event.params.links;
+  profile.settingsHash = event.params.settingsHash;
   profile.createdAt = blockTimestamp;
   profile.updatedAt = blockTimestamp;
   profile.save();
@@ -49,10 +55,10 @@ export function handleProfileUpdated(event: ProfileUpdatedEvent): void {
   if (profile == null) {
     profile = new Profile(handle);
     profile.tokenId = event.params.tokenId;
-    profile.name = event.params.name;
     profile.handle = handle;
-    profile.category = categoryString;
-    profile.owner = event.params.owner.toHex();
+    profile.owner = event.params.owner;
+    profile.eoa = event.params.owner.toHex(); // FIXME: Using owner as EOA fallback. on update event, we won't have access to eoa, so we use owner
+    profile.tipAmount = ZERO_BI; // Initialize tip amount to zero
     profile.createdAt = event.block.timestamp;
   }
 
@@ -63,6 +69,7 @@ export function handleProfileUpdated(event: ProfileUpdatedEvent): void {
   profile.avatar = event.params.avatar;
   profile.linkKeys = event.params.linkKeys;
   profile.links = event.params.links;
+  profile.settingsHash = event.params.settingsHash;
   profile.updatedAt = event.block.timestamp;
   profile.save();
 }
@@ -76,6 +83,20 @@ export function handleProfileDeleted(event: ProfileDeletedEvent): void {
 }
 
 export function handleNoteLeft(event: NoteLeftEvent): void {
+  const tipAmount = event.params.tipAmount;
+  const profileId = event.params.handle;
+
+  // get the profile by handle
+  let profile = Profile.load(profileId);
+  // update tip amount if profile exists and tipAmount is greater than zero
+  if (profile && tipAmount.gt(ZERO_BI)) {
+    // update tip amount
+    profile.tipAmount = profile.tipAmount.plus(tipAmount);
+    profile.updatedAt = event.block.timestamp;
+    profile.save();
+  }
+
+  // create a new note
   let note = new Note(
     "note_" +
       event.params.tokenId.toString() +
@@ -87,6 +108,8 @@ export function handleNoteLeft(event: NoteLeftEvent): void {
   note.to = event.params.handle;
   note.content = event.params.content;
   note.author = event.params.author;
+  note.tipAmount = event.params.tipAmount;
+  note.txHash = event.transaction.hash.toHex();
   note.createdAt = event.block.timestamp;
   note.save();
 }

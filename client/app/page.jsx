@@ -7,67 +7,154 @@ import {
   Row,
   Col,
   Space,
-  Divider,
-  Carousel,
   Input,
-  message
+  message,
+  Steps
 } from "antd";
-import Link from "next/link";
+import {
+  RocketOutlined,
+  CheckCircleOutlined,
+  StarFilled,
+  UserOutlined,
+  LinkOutlined,
+  ShareAltOutlined,
+  CrownOutlined,
+  ThunderboltOutlined,
+  SafetyOutlined,
+  GlobalOutlined,
+  DollarOutlined,
+  NotificationOutlined
+} from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { linkFolioContract } from "@/app/utils";
+import Hero from "./components/Hero";
+import styles from "./page.module.css";
 
 const { Title, Paragraph } = Typography;
 
 const howItWorksSteps = [
-  { icon: "🔐", step: "Connect your wallet" },
-  { icon: "🎨", step: "Pick a template" },
-  { icon: "🔗", step: "Add your links" },
-  { icon: "🚀", step: "Publish & share" },
-  { icon: "📝", step: "Leave notes & messages" },
-  { icon: "📢", step: "Share posts & announcements" }
+  {
+    icon: (
+      <UserOutlined
+        style={{ fontSize: "24px", color: "var(--primary-color)" }}
+      />
+    ),
+    title: "Connect Wallet",
+    description:
+      "Connect your wallet with one click - no complex setup required"
+  },
+  {
+    icon: (
+      <CrownOutlined
+        style={{ fontSize: "24px", color: "var(--secondary-color)" }}
+      />
+    ),
+    title: "Choose Template",
+    description:
+      "Pick from our professionally designed templates or customize your own"
+  },
+  {
+    icon: (
+      <LinkOutlined
+        style={{ fontSize: "24px", color: "var(--accent-color)" }}
+      />
+    ),
+    title: "Add Content & Links",
+    description:
+      "Add your social links, bio, and customize your profile appearance with themes and colors"
+  },
+  {
+    icon: (
+      <ShareAltOutlined
+        style={{ fontSize: "24px", color: "var(--success-color)" }}
+      />
+    ),
+    title: "Share & Mint",
+    description:
+      "Publish your profile as a soulbound NFT and share it with the world"
+  },
+  {
+    icon: (
+      <NotificationOutlined
+        style={{ fontSize: "24px", color: "var(--warning-color)" }}
+      />
+    ),
+    title: "Create Posts",
+    description:
+      "Share updates, announcements, and content with your audience through dynamic posts"
+  },
+  {
+    icon: (
+      <DollarOutlined
+        style={{ fontSize: "24px", color: "var(--primary-color)" }}
+      />
+    ),
+    title: "Receive Notes & Tips",
+    description:
+      "Your community can leave notes on your profile and send tips to support your work"
+  }
 ];
 
 const features = [
   {
-    icon: "🎨",
-    title: "Customizable Profiles",
+    icon: (
+      <CrownOutlined
+        style={{ fontSize: "32px", color: "var(--secondary-color)" }}
+      />
+    ),
+    title: "Soulbound NFT Profiles",
     description:
-      "Personalize your profile with a bio, avatar, and custom links."
+      "Each profile is minted as a unique, non-transferrable NFT ensuring true ownership and authenticity.",
+    highlight: true
   },
   {
-    icon: "🔗",
-    title: "Soulbound NFTs",
+    icon: (
+      <ThunderboltOutlined
+        style={{ fontSize: "32px", color: "var(--warning-color)" }}
+      />
+    ),
+    title: "Gas-Free Transactions",
     description:
-      "Each profile is minted as a unique, non-transferrable NFT for true ownership and authenticity."
+      "Enjoy seamless interactions with zero gas fees powered by NERO Chain's Account Abstraction technology.",
+    highlight: true
   },
   {
-    icon: "🗄️",
-    title: "On-chain Metadata",
+    icon: (
+      <SafetyOutlined
+        style={{ fontSize: "32px", color: "var(--success-color)" }}
+      />
+    ),
+    title: "On-Chain Metadata",
     description:
-      "Store profile data directly on-chain for integrity and immutability."
+      "All profile data is stored directly on-chain, ensuring permanence, integrity, and decentralization."
   },
   {
-    icon: "⛽️",
-    title: "Gasless Experience",
+    icon: (
+      <GlobalOutlined
+        style={{ fontSize: "32px", color: "var(--primary-color)" }}
+      />
+    ),
+    title: "Customizable Design",
     description:
-      "Powered by NERO Chain Paymaster, interact without paying gas fees using ETH or stablecoins."
+      "Personalize your profile with custom themes, colors, fonts, and layouts to match your brand."
   },
   {
-    icon: "📝",
-    title: "Notes for Profiles",
+    icon: (
+      <StarFilled style={{ fontSize: "32px", color: "var(--accent-color)" }} />
+    ),
+    title: "Social Features",
     description:
-      "Let community members leave quick thoughts or messages on your profile."
+      "Receive tips, messages, and interact with your community through built-in social features."
   },
   {
-    icon: "📢",
-    title: "Posts & Announcements",
-    description: "Share updates or announcements directly with your audience."
-  },
-  {
-    icon: "🧩",
-    title: "Native Account Abstraction",
+    icon: (
+      <CheckCircleOutlined
+        style={{ fontSize: "32px", color: "var(--success-color)" }}
+      />
+    ),
+    title: "Easy Integration",
     description:
-      "Streamlined wallet interactions and enhanced UX via smart contract-based wallets."
+      "Simple APIs and tools to integrate LinkFolio profiles into your existing applications and workflows."
   }
 ];
 
@@ -75,10 +162,6 @@ export default function Home() {
   const [handle, setHandle] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const handleInputChange = (e) => {
-    setHandle(e.target.value);
-  };
 
   const handleClaim = async () => {
     // handle length should be between 3 and 15 characters
@@ -108,199 +191,226 @@ export default function Home() {
       setLoading(false);
     }
   };
+  const handleGetStarted = () => {
+    const handleInput = document.getElementById("handle-input");
+    if (handleInput) {
+      handleInput.scrollIntoView({ behavior: "smooth" });
+      handleInput.focus();
+    }
+  };
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        padding: 0
-      }}
-    >
+    <div className={styles.mainContainer}>
       {/* Hero Section */}
-      <div
-        style={{
-          maxWidth: 1500,
-          margin: "0 auto"
-          // padding: "64px 16px 32px 16px"
-        }}
-      >
-        <Row gutter={[48, 24]} align="middle" justify="center">
-          {/* Left: Title, Description, Input */}
-          <Col xs={24} md={12}>
-            <Title
-              level={1}
-              style={{
-                fontWeight: 800,
-                fontSize: 48,
-                marginBottom: 16,
-                textAlign: "left"
-              }}
-            >
-              Own Your Digital Identity. Forever.
-            </Title>
-            <Paragraph
-              style={{
-                fontSize: 20,
-                color: "#555",
-                margin: "0 0 32px 0",
-                textAlign: "left"
-              }}
-            >
-              Join LinkFolio! Your decentralized, portable, and ownable Link
-              Hub. Seamlessly share your creations across Instagram, TikTok,
-              Twitter, YouTube, and beyond—all with one simple link.
-            </Paragraph>
-            <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
-              <Space.Compact>
-                <Input
-                  size="large"
-                  placeholder="Enter your handle"
-                  value={handle}
-                  onChange={handleInputChange}
-                  prefix="link.fo/"
-                />
-                <Button
-                  type="primary"
-                  size="large"
-                  shape="round"
-                  loading={loading}
-                  onClick={handleClaim}
-                >
-                  Claim
-                </Button>
-              </Space.Compact>
-              <Link href="/explore">
-                <Button size="large" shape="round" style={{ fontWeight: 600 }}>
-                  Explore
-                </Button>
-              </Link>
-            </div>
-          </Col>
-          {/* Right: Carousel */}
-          <Col xs={24} md={12}>
-            <Carousel
-              dots
-              autoplay
-              dotPosition="top"
-              style={{ borderRadius: "10px" }}
-            >
-              {Array.from({ length: 5 }).map((_, index) => (
-                <Card
-                  key={index}
-                  variant="outlined"
-                  hoverable
-                  style={{ height: 100, borderRadius: 18 }}
-                  cover={
-                    <img
-                      alt="example"
-                      src={`https://picsum.photos/seed/${index}/800/400`}
-                    />
-                  }
-                >
-                  <Card.Meta
-                    title="Europe Street beat"
-                    description="www.instagram.com"
-                  />
-                </Card>
-              ))}
-            </Carousel>
-          </Col>
-        </Row>
-      </div>
-      <Divider />
-
-      {/* Features Section */}
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-          padding: "32px 16px 0 16px"
-        }}
-      >
-        <Title
-          level={2}
-          style={{ textAlign: "center", fontWeight: 700, marginBottom: 32 }}
-        >
-          Powerful Features
-        </Title>
-        <Row gutter={[32, 32]} justify="center">
-          {features.map((feature, index) => (
-            <Col xs={24} sm={12} md={12} lg={6} key={index}>
-              <Card
-                variant="outlined"
-                hoverable
-                style={{
-                  borderRadius: 18,
-                  minHeight: 180,
-                  boxShadow: "0 2px 16px #6366f111",
-                  textAlign: "center",
-                  background: "#fff"
-                }}
-              >
-                <div style={{ fontSize: 36, marginBottom: 12 }}>
-                  {feature.icon}
-                </div>
-                <Title level={4} style={{ marginBottom: 8 }}>
-                  {feature.title}
-                </Title>
-                <Paragraph style={{ color: "#666" }}>
-                  {feature.description}
-                </Paragraph>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
-      <Divider />
-
+      <Hero onGetStarted={handleGetStarted} />
       {/* How It Works Section */}
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-          padding: "64px 16px 0 16px"
-        }}
-      >
-        <Title
-          level={2}
-          style={{
-            textAlign: "center",
-            fontWeight: 700,
-            marginBottom: 32
-          }}
-        >
-          How It Works
-        </Title>
-        <Row gutter={[24, 24]} justify="center">
-          {howItWorksSteps.map((item, idx) => (
-            <Col xs={24} sm={12} md={6} key={idx}>
+      <section className={styles.howItWorksSection}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <Title level={2} className={styles.sectionTitle}>
+              How LinkFolio Works
+            </Title>
+            <Paragraph className={styles.sectionSubtitle}>
+              Create your decentralized profile in minutes with our simple,
+              intuitive process
+            </Paragraph>
+          </div>
+
+          <Steps
+            direction="vertical"
+            size="default"
+            current={-1}
+            className={styles.stepsContainer}
+            items={howItWorksSteps.map((step, index) => ({
+              title: <span className={styles.stepTitle}>{step.title}</span>,
+              description: (
+                <span className={styles.stepDescription}>
+                  {step.description}
+                </span>
+              ),
+              icon: step.icon,
+              style: {
+                paddingBottom: index === howItWorksSteps.length - 1 ? 0 : "40px"
+              }
+            }))}
+          />
+        </div>
+      </section>{" "}
+      {/* Profile Customization Showcase Section */}
+      <section className={styles.customizationSection}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <Title level={2} className={styles.sectionTitle}>
+              🎨 Customize Your Style
+            </Title>
+            <Paragraph className={styles.sectionSubtitle}>
+              Start with a template or build from scratch - make it uniquely
+              yours
+            </Paragraph>
+          </div>
+
+          <Row gutter={[32, 32]} justify="center">
+            <Col xs={24} lg={16}>
               <Card
-                variant="outlined"
-                style={{
-                  borderRadius: 18,
-                  minHeight: 140,
-                  textAlign: "center",
-                  background: "#f8fafc"
-                }}
+                className={styles.customizationCard}
+                styles={{ body: { padding: 0 } }}
               >
-                <div
-                  style={{
-                    fontSize: 32,
-                    marginBottom: 10
-                  }}
-                >
-                  {item.icon}
-                </div>
-                <Title level={4} style={{ marginBottom: 6 }}>
-                  Step {idx + 1}
+                <div className={styles.customizationIcon}>🎨</div>
+                <Title level={3} className={styles.customizationTitle}>
+                  Templates & Customization
                 </Title>
-                <Paragraph style={{ color: "#555", fontSize: 16 }}>
-                  {item.step}
+                <Paragraph className={styles.customizationDescription}>
+                  Start with professional templates or build from scratch with
+                  advanced customization tools
                 </Paragraph>
+
+                {/* Template Preview Cards */}
+                <div className={styles.templateGrid}>
+                  {[
+                    { name: "Modern Glass", bg: "#E3F2FD", accent: "#1565C0" },
+                    { name: "Retro Vibes", bg: "#FCE4EC", accent: "#AD1457" },
+                    { name: "Dark Mode", bg: "#263238", accent: "#00BCD4" },
+                    { name: "Minimalist", bg: "#FAFAFA", accent: "#424242" }
+                  ].map((template, index) => (
+                    <div
+                      key={index}
+                      className={styles.templateCard}
+                      style={{ background: template.bg }}
+                    >
+                      <div
+                        className={styles.templateAvatar}
+                        style={{ background: template.accent }}
+                      />
+                      <div
+                        className={styles.templateLine}
+                        style={{ background: template.accent }}
+                      />
+                      <div
+                        className={styles.templateSubline}
+                        style={{ background: template.accent }}
+                      />
+                      <div
+                        className={styles.templateName}
+                        style={{ color: template.accent }}
+                      >
+                        {template.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Customization Features */}
+                <div className={styles.featuresContainer}>
+                  {[
+                    { name: "Colors", icon: "🎨" },
+                    { name: "Fonts", icon: "📝" },
+                    { name: "Layouts", icon: "🎯" },
+                    { name: "Shapes", icon: "🔘" }
+                  ].map((feature, index) => (
+                    <div key={index} className={styles.featurePill}>
+                      <span className={styles.featureIcon}>{feature.icon}</span>
+                      <span className={styles.featureText}>{feature.name}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Real-time Preview Badge */}
+                <div className={styles.previewBadge}>
+                  <span className={styles.previewIcon}>🔥</span>
+                  <span className={styles.previewText}>Real-time preview</span>
+                </div>
               </Card>
             </Col>
-          ))}
-        </Row>
-      </div>
+          </Row>
+        </div>
+      </section>{" "}
+      {/* Features Section */}
+      <section className={styles.featuresSection}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <Title level={2} className={styles.sectionTitle}>
+              Why Choose LinkFolio?
+            </Title>
+            <Paragraph className={styles.sectionSubtitle}>
+              Built for the future of digital identity with cutting-edge
+              blockchain technology
+            </Paragraph>
+          </div>
+
+          <Row gutter={[32, 32]}>
+            {features.map((feature, index) => (
+              <Col key={index} xs={24} md={12} lg={8}>
+                <Card
+                  className={`${styles.featureCard} ${
+                    feature.highlight
+                      ? styles.featureCardHighlight
+                      : styles.featureCardNormal
+                  }`}
+                  styles={{ body: { padding: "32px 24px" } }}
+                  hoverable
+                >
+                  {feature.highlight && (
+                    <div className={styles.popularBadge}>POPULAR</div>
+                  )}
+
+                  <div className={styles.featureIconContainer}>
+                    {feature.icon}
+                  </div>
+
+                  <Title level={4} className={styles.featureTitle}>
+                    {feature.title}
+                  </Title>
+
+                  <Paragraph className={styles.featureDescription}>
+                    {feature.description}
+                  </Paragraph>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </div>
+      </section>
+      {/* Get Started Section */}
+      <section className={styles.getStartedSection} id="get-started">
+        <div className="container">
+          <div className={styles.getStartedContainer}>
+            <Title level={2} className={styles.getStartedTitle}>
+              Ready to Get Started?
+            </Title>
+            <Paragraph className={styles.getStartedSubtitle}>
+              Enter your desired handle to check availability and create your
+              LinkFolio
+            </Paragraph>
+
+            <Space.Compact size="large" className={styles.handleInputGroup}>
+              <Input
+                id="handle-input"
+                placeholder="Enter your handle (e.g., john)"
+                value={handle}
+                onChange={(e) => setHandle(e.target.value.toLowerCase())}
+                onPressEnter={handleClaim}
+                className={styles.handleInput}
+                maxLength={20}
+              />
+              <Button
+                type="primary"
+                onClick={handleClaim}
+                loading={loading}
+                disabled={!handle.trim()}
+                icon={<RocketOutlined />}
+                className={styles.getStartedButton}
+              >
+                Get Started
+              </Button>
+            </Space.Compact>
+
+            <div className={styles.tipContainer}>
+              <Paragraph className={styles.tipText}>
+                💡 Tip: Choose a memorable handle that represents your brand
+              </Paragraph>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

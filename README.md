@@ -10,36 +10,16 @@ Craft your unique bio, avatar, and links to social media as properties and attri
 
 - **Gasless Experience:** Powered by NERO Chain Paymaster, users can interact without paying gas fees using ETH or stablecoins.
 - **Native Account Abstraction:** Streamlines wallet interactions and enhances user experience through smart contract-based wallets.
-- **Customizable Profiles:** Personalize your profile with a bio, avatar, and custom links.
-- **Soulbound NFTs:** Each profile is minted as a unique non transferrable NFT, offering ownership and authenticity.
-- **On-chain Metadata:** Store profile data directly on-chain, ensuring data integrity and immutability.
-- **User-Friendly DApp:** Claim, curate and update your social links securely and intuitively.
+- **Soulbound NFT Profiles:** Each profile is minted as a unique, non-transferrable NFT ensuring true ownership and authenticity.
+- **On-Chain Metadata:** All profile data is stored directly on-chain, ensuring permanence, integrity, and decentralization.
+- **Posts/Updates:** Share updates or announcements with your community through posts, enhancing engagement.
+- **Community Notes with Tips:** Allow community members to leave quick thoughts or messages on your profile and send tips to support creators, fostering interaction.
+- **Customizable Design:** Personalize your profile with custom themes, colors, fonts, and layouts to match your brand.
+- **Profile Templates:** Professional templates and appearance customization with live preview functionality.
 
-### UX Flow
+![lfv04-appearance-settings-form-sc](https://github.com/user-attachments/assets/322e5940-ab27-4deb-ac13-49b3da1526e4)
 
-```mermaid
-graph TD
-    A[User Visits LinkFolio Homepage] --> B[Connect Wallet]
-    B --> C[Assign Smart Wallet via NERO AA Platform]
-    C --> D[Enter Desired Handle to Claim]
-
-    D --> E{Is Handle Taken?}
-    E -->|Yes| F[Show Error: Handle Already Claimed]
-    E -->|No| G[Open Claim Page: Upload Avatar, Name, Bio, Social Links]
-    G --> H[Sign Message via Metamask]
-    H --> I[Mint Soulbound Profile NFT to Smart Wallet Address]
-    I --> J[Redirect to /username Profile Page]
-
-    J --> K{Visit /username}
-    K -->|Profile Exists| L[Display Profile Details: Avatar, Name, Bio, Links, NFT Info, Share]
-    K -->|Profile Not Found| M[Show Claim Page to Register the Handle]
-```
-
-In LinkFolio, I prioritize on-chain metadata to safeguard the integrity and permanence of NFT content. Unlike many platforms, it ensure that the symbolic value of NFT ownership remains secure and untampered by storing all metadata directly on the blockchain. This approach prevents data manipulation and loss, preserving the unique nature and exclusivity of each NFT.
-
-![Screen1](https://github.com/user-attachments/assets/a65575d9-44bd-47df-8f95-adb19e5866e3)
-
-**Contract Address:** [0xb2eF0B385FcEE4a54F097c37761AAc4BB4D98C4A](https://testnet.neroscan.io/address/0xb2eF0B385FcEE4a54F097c37761AAc4BB4D98C4A?tab=Transactions). Deployed on Nerochain Testnet.
+**Contract Address:** [0x139447bD6f8d685a0A6e34dbBbf50377efB37DB6](https://testnet.neroscan.io/address/0x139447bD6f8d685a0A6e34dbBbf50377efB37DB6?tab=Transactions). Deployed on Nerochain Testnet.
 
 ## Getting Started
 
@@ -67,13 +47,25 @@ where the user is prompted to sign a message to create a profile, post or note. 
 
 ### Demo
 
-![Profile-Screen](https://github.com/user-attachments/assets/a65575d9-44bd-47df-8f95-adb19e5866e3)
-![Edit-Screen](https://github.com/user-attachments/assets/9bea64a1-959d-4dca-b10f-61e0883e3a06)
-![Posts-Screen](https://github.com/user-attachments/assets/c4f57abc-856a-47e7-b801-3ca3b85b8894)
-![Notes-Screen](https://github.com/user-attachments/assets/ce2a3bef-bdfb-49c7-afa0-cf3bc0ed8dd3)
-![Discover-Screen](https://github.com/user-attachments/assets/099a6deb-014b-43ab-a71f-96b371ff2614)
+![lfv04-appearance-settings-sc](https://github.com/user-attachments/assets/32108429-f3b1-445e-822e-350e37f46ea9)
+![lfv04-appearance-settings-form-sc](https://github.com/user-attachments/assets/322e5940-ab27-4deb-ac13-49b3da1526e4)
+![lfv04-edit-profile-sc](https://github.com/user-attachments/assets/0b95ce18-2f6b-4cbe-8022-52165ab2b5d6)
+![lfv04-notes-tips-sc](https://github.com/user-attachments/assets/6d78895c-7642-49c6-9243-424c1737fba8)
+![lfv04-posts-sc](https://github.com/user-attachments/assets/da95a7b2-6579-4595-97f6-ca1bff16ca6c)
+![lfv04-explore-sc](https://github.com/user-attachments/assets/160aa900-c888-4723-b330-c1f922cff4d4)
 
 ### ChangeLog
+
+#### 0.4.0
+
+- Added comprehensive appearance customization for profiles with live preview.
+- Introduced tipping functionality for notes, sending tips directly to profile owners.
+- Notes with tips display tip amounts and include links to view transactions on the blockchain explorer.
+- Added IPFS upload support for avatars and profile appearance settings.
+- Provided curated profile templates for quick style application to profiles.
+- Complete UI revamp with redesigned home page featuring hero section, features showcase, how it works guide, stats, and enhanced footer.
+- Improved component architecture with CSS modules for better maintainability and performance.
+- Enhanced responsive design and mobile optimization across all pages.
 
 #### 0.3.0
 

@@ -1,0 +1,47 @@
+/* SiteLayout Component Styles */
+.siteLayout {
+  min-height: 100vh;
+  background: transparent;
+}
+
+.siteHeader {
+  /* position: sticky; */
+  top: 8px;
+  z-index: 1000;
+  padding: 0 24px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 16px;
+  margin: 16px 16px 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+}
+
+.siteLogo {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+  background: var(--text-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.siteContent {
+  margin: 24px 16px 0;
+  padding: 0;
+  min-height: calc(100vh - 200px);
+  position: relative;
+}

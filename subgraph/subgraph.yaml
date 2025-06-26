@@ -8,9 +8,9 @@ dataSources:
     name: LinkFolio
     network: nero-evm-testnet
     source:
-      address: "0xb2eF0B385FcEE4a54F097c37761AAc4BB4D98C4A"
+      address: "0x139447bD6f8d685a0A6e34dbBbf50377efB37DB6"
       abi: LinkFolio
-      startBlock: 7258429
+      startBlock: 7931271
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -24,13 +24,13 @@ dataSources:
         - name: LinkFolio
           file: ./abis/LinkFolio.json
       eventHandlers:
-        - event: ProfileCreated(indexed uint256,string,string,uint8,string,string,address,address,string[],string[])
+        - event: ProfileCreated(indexed uint256,string,string,uint8,string,string,address,address,string[],string[],string)
           handler: handleProfileCreated
         - event: ProfileDeleted(indexed uint256,string)
           handler: handleProfileDeleted
-        - event: ProfileUpdated(indexed uint256,string,string,uint8,string,string,address,string[],string[])
+        - event: ProfileUpdated(indexed uint256,string,string,uint8,string,string,address,string[],string[],string)
           handler: handleProfileUpdated
-        - event: NoteLeft(indexed uint256,string,uint256,string,address)
+        - event: NoteLeft(indexed uint256,string,uint256,string,address,uint256)
           handler: handleNoteLeft
         - event: PostCreated(indexed uint256,string,uint256,string,address)
           handler: handlePostCreated

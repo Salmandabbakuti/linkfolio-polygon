@@ -8,8 +8,6 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 contract LinkFolio is ERC721 {
     using Strings for uint256;
 
-    // starts from 1 to prevent returning default value of 0 if profile not found by handle
-    // which causes inaccuracies in other functions and in the frontend
     uint256 public nextTokenId = 1;
 
     enum ProfileCategory {
@@ -26,7 +24,8 @@ contract LinkFolio is ERC721 {
         string bio;
         string avatar;
         address owner; // owner can be smart-account creating the profile
-        address _eoa; // actual address that owns the profile nft and can update/delete the profile
+        address eoa; // actual address that owns the profile nft and can update/delete the profile
+        string settingsHash; // ipfs hash of the profile appearance settings json
         string[] linkKeys;
         mapping(string => string) links;
     }
@@ -35,6 +34,7 @@ contract LinkFolio is ERC721 {
         uint256 id;
         string content;
         address author;
+        uint256 tipAmount;
     }
 
     struct Post {
@@ -63,9 +63,10 @@ contract LinkFolio is ERC721 {
         string bio,
         string avatar,
         address owner,
-        address _eoa,
+        address eoa,
         string[] linkKeys,
-        string[] links
+        string[] links,
+        string settingsHash
     );
 
     event ProfileUpdated(
@@ -77,7 +78,8 @@ contract LinkFolio is ERC721 {
         string avatar,
         address owner,
         string[] linkKeys,
-        string[] links
+        string[] links,
+        string settingsHash
     );
 
     event ProfileDeleted(uint256 indexed tokenId, string handle);
@@ -87,7 +89,8 @@ contract LinkFolio is ERC721 {
         string handle,
         uint256 noteId,
         string content,
-        address author
+        address author,
+        uint256 tipAmount
     );
 
     event PostCreated(
@@ -122,7 +125,8 @@ contract LinkFolio is ERC721 {
         string memory _avatar,
         string[] memory _linkKeys,
         string[] memory _links,
-        address _eoa
+        address _eoa,
+        string memory _settingsHash
     ) external {
         require(
             _linkKeys.length == _links.length,
@@ -147,7 +151,8 @@ contract LinkFolio is ERC721 {
         newProfile.avatar = _avatar;
         newProfile.linkKeys = _linkKeys;
         newProfile.owner = msg.sender;
-        newProfile._eoa = _eoa;
+        newProfile.eoa = _eoa;
+        newProfile.settingsHash = _settingsHash;
 
         for (uint256 i = 0; i < _linkKeys.length; i++) {
             newProfile.links[_linkKeys[i]] = _links[i];
@@ -163,7 +168,8 @@ contract LinkFolio is ERC721 {
             msg.sender,
             _eoa,
             _linkKeys,
-            _links
+            _links,
+            _settingsHash
         );
     }
 
@@ -174,7 +180,8 @@ contract LinkFolio is ERC721 {
         string memory _bio,
         string memory _avatar,
         string[] memory _linkKeys,
-        string[] memory _links
+        string[] memory _links,
+        string memory _settingsHash
     ) external onlyProfileOwner(_tokenId) {
         require(
             _linkKeys.length == _links.length,
@@ -186,6 +193,7 @@ contract LinkFolio is ERC721 {
         profile.category = _category;
         profile.bio = _bio;
         profile.avatar = _avatar;
+        profile.settingsHash = _settingsHash;
         profile.linkKeys = _linkKeys;
 
         for (uint256 i = 0; i < _linkKeys.length; i++) {
@@ -200,7 +208,8 @@ contract LinkFolio is ERC721 {
             _avatar,
             msg.sender,
             _linkKeys,
-            _links
+            _links,
+            _settingsHash
         );
     }
 
@@ -214,7 +223,10 @@ contract LinkFolio is ERC721 {
         emit ProfileDeleted(_tokenId, handle);
     }
 
-    function leaveNote(string memory _handle, string memory _content) external {
+    function leaveNote(
+        string memory _handle,
+        string memory _content
+    ) external payable {
         uint256 tokenId = handleToTokenId[_handle];
         require(
             _ownerOf(tokenId) != address(0),
@@ -225,8 +237,28 @@ contract LinkFolio is ERC721 {
             "LinkFolio: content must be between 1-280 characters"
         );
         uint256 noteId = profileNoteCount[tokenId]++;
-        notesByHandle[_handle][noteId] = Note(noteId, _content, msg.sender);
-        emit NoteLeft(tokenId, _handle, noteId, _content, msg.sender);
+        notesByHandle[_handle][noteId] = Note(
+            noteId,
+            _content,
+            msg.sender,
+            msg.value
+        );
+
+        // If tip amount is provided, transfer it to the profile owner
+        if (msg.value > 0) {
+            address profileOwner = _ownerOf(tokenId);
+            (bool success, ) = payable(profileOwner).call{value: msg.value}("");
+            require(success, "LinkFolio: Failed to transfer tip");
+        }
+
+        emit NoteLeft(
+            tokenId,
+            _handle,
+            noteId,
+            _content,
+            msg.sender,
+            msg.value
+        );
     }
 
     function createPost(
