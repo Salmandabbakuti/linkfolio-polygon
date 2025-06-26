@@ -35,7 +35,8 @@ import {
   LoadingOutlined,
   ExpandAltOutlined,
   SaveOutlined,
-  CompressOutlined
+  CompressOutlined,
+  ArrowLeftOutlined
 } from "@ant-design/icons";
 import {
   useAppKitProvider,
@@ -194,6 +195,7 @@ export default function Profile({ params }) {
           );
         }
         console.log("Parsed settings:", profileSettingsRes);
+        settingsFormData.setFieldsValue(profileSettingsRes);
         setAppearanceSettings(profileSettingsRes);
       }
     } catch (err) {
@@ -368,6 +370,17 @@ export default function Profile({ params }) {
                 loading={loading?.read}
                 extra={
                   <Space>
+                    {profile?.id && (
+                      <Button
+                        shape="circle"
+                        title="Back"
+                        icon={<ArrowLeftOutlined />}
+                        onClick={() => {
+                          fetchProfile(); // fetch profile again to ensure accurate data and settings
+                          setMode("view");
+                        }}
+                      />
+                    )}
                     <Button
                       type="primary"
                       shape="circle"
@@ -595,7 +608,10 @@ export default function Profile({ params }) {
                             <Space>
                               <Button
                                 shape="round"
-                                onClick={() => setMode("view")}
+                                onClick={() => {
+                                  fetchProfile(); // fetch profile again to ensure accurate data and settings
+                                  setMode("view");
+                                }}
                               >
                                 Back
                               </Button>
@@ -804,7 +820,6 @@ export default function Profile({ params }) {
                           />
                           <Form
                             layout="vertical"
-                            // id={JSON.stringify(appearanceSettings)} // force re-render on settings change
                             form={settingsFormData}
                             initialValues={initialAppearanceSettings}
                             onValuesChange={(changedValues, allValues) => {
