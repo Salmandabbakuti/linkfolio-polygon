@@ -16,8 +16,8 @@ const metadata = {
   name: "LinkFolio",
   description:
     "LinkFolio turns personal profiles into NFTs. Own your soulbound digital identity effortlessly fully onchain",
-  url: "https://mywebsite.com", // origin must match your domain & subdomain
-  icons: ["https://avatars.mywebsite.com/"]
+  url: "https://linkfolio-nero.vercel.app", // origin must match your domain & subdomain
+  icons: ["https://linkfolio-nero.vercel.app/favicon.ico"]
 };
 
 // 3. Create the AppKit instance

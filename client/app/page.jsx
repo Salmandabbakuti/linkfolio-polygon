@@ -322,9 +322,9 @@ export default function Home() {
             </Col>
           </Row>
         </div>
-      </section>{" "}
+      </section>
       {/* Features Section */}
-      <section className={styles.featuresSection}>
+      <section className={styles.featuresSection} id="features">
         <div className="container">
           <div className={styles.sectionHeader}>
             <Title level={2} className={styles.sectionTitle}>

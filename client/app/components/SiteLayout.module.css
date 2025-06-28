@@ -20,6 +20,16 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: var(--shadow-lg);
   transition: all var(--transition-normal);
+  overflow: hidden;
+  height: 64px;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 100%;
+  overflow: hidden;
 }
 
 .siteLogo {
@@ -37,6 +47,95 @@
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+/* Desktop Navigation */
+.desktopNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.navLink {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  position: relative;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  box-sizing: border-box;
+}
+
+.navLink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.navLink:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile Menu Button */
+.mobileMenuButton {
+  display: none;
+  color: rgba(255, 255, 255, 0.85);
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.mobileMenuButton:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .desktopNav {
+    display: none;
+  }
+
+  .mobileMenuButton {
+    display: flex;
+  }
+
+  .siteHeader {
+    margin: 8px 8px 0;
+    padding: 0 16px;
+  }
+
+  .leftSection {
+    gap: 16px;
+  }
+
+  .siteLogo {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .siteHeader {
+    margin: 4px 4px 0;
+    padding: 0 12px;
+  }
+
+  .leftSection {
+    gap: 12px;
+  }
+
+  .siteLogo {
+    font-size: 1.1rem;
+  }
+
+  .headerActions {
+    gap: 8px;
+  }
 }
 
 .siteContent {
