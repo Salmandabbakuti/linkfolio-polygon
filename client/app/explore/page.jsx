@@ -15,10 +15,8 @@ import {
   Tag
 } from "antd";
 import Link from "next/link";
-import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
-import { BrowserProvider } from "ethers";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { subgraphClient as client, GET_PROFILES_QUERY } from "@/app/utils";
-import { getAAWalletAddress } from "@/app/utils/aaUtils";
 import { SyncOutlined } from "@ant-design/icons";
 
 const { Title, Paragraph } = Typography;
@@ -29,11 +27,9 @@ export default function Explore() {
   const [dataLoading, setDataLoading] = useState(false);
   const [profiles, setProfiles] = useState([]);
   const [showMyProfiles, setShowMyProfiles] = useState(false);
-  const [aaWalletAddress, setAAWalletAddress] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const { address: account } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider("eip155");
 
   const fetchProfiles = () => {
     setDataLoading(true);
@@ -45,7 +41,7 @@ export default function Explore() {
         orderDirection: "desc",
         where: {
           and: [
-            { owner: showMyProfiles ? aaWalletAddress : undefined },
+            { eoa: showMyProfiles ? account?.toLowerCase() : undefined },
             ...(searchQuery
               ? [
                   {
@@ -62,9 +58,7 @@ export default function Explore() {
                       {
                         category_contains_nocase: searchQuery
                       },
-                      {
-                        owner_contains_nocase: searchQuery
-                      }
+                      { eoa_contains_nocase: searchQuery }
                     ]
                   }
                 ]
@@ -86,23 +80,8 @@ export default function Explore() {
       });
   };
 
-  const resolveAAWalletAddress = async () => {
-    if (!walletProvider) return;
-    try {
-      const ethersProvider = new BrowserProvider(walletProvider);
-      const signer = await ethersProvider.getSigner();
-      const aaWalletAddress = await getAAWalletAddress(signer);
-      setAAWalletAddress(aaWalletAddress?.toLowerCase());
-    } catch (err) {
-      console.error("Failed to resolve AA wallet address:", err);
-    }
-  };
-
   useEffect(() => {
     fetchProfiles();
-    if (account) {
-      resolveAAWalletAddress();
-    }
   }, [showMyProfiles, account]);
 
   return (
