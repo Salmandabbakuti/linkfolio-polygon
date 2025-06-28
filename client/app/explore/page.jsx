@@ -161,7 +161,10 @@ export default function Explore() {
                   ]}
                 >
                   <Avatar
-                    src={`https://api.dicebear.com/5.x/open-peeps/svg?seed=${item?.handle}`}
+                    src={
+                      item?.avatar ||
+                      `https://api.dicebear.com/5.x/open-peeps/svg?seed=${item?.handle}`
+                    }
                     alt="avatar"
                     size={80}
                     shape="circle"
