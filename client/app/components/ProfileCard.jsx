@@ -319,8 +319,6 @@ export default function ProfileCard({
     };
   }, [appearanceSettings]);
 
-  console.log("Dynamic Styles:", dynamicStyles);
-
   return (
     <>
       {/* Custom CSS */}

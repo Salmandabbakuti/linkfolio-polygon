@@ -23,7 +23,6 @@ export async function uploadProfileSettingsToIpfs(settingsObj) {
 
 export async function uploadFileToIpfs(formData) {
   const file = formData.get("file");
-  console.log("file in action", file);
   if (!file) return errorResponse("No file provided to upload", 400, true);
   try {
     const uploadRes = await pinata.upload.public.file(file, {});

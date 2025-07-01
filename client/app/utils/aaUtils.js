@@ -29,7 +29,6 @@ export const getAAWalletAddress = async (accountSigner) => {
 
   // Get the counterfactual address of the AA wallet
   const address = simpleAccount.getSender();
-  console.log("AA wallet address:", address);
   return address;
 };
 

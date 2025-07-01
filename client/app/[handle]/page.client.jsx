@@ -165,7 +165,6 @@ export default function Profile({ params }) {
         posts_orderDirection: "desc",
         posts_where: {}
       });
-      console.log("Fetched profile:", data);
       const profile = data?.profile;
       if (!profile && modeParam === "claim") setMode("edit");
       if (!profile) return;
@@ -181,7 +180,6 @@ export default function Profile({ params }) {
         links: linksObj,
         id: tokenId
       };
-      console.log("parsed profile:", parsedProfile);
       setProfile(parsedProfile);
       profileFormData.setFieldsValue(parsedProfile);
       // get profile settings from IPFS if settingsHash is present
@@ -189,13 +187,11 @@ export default function Profile({ params }) {
         const profileSettingsRes = await getProfileSettingsFromIpfs(
           parsedProfile?.settingsHash
         );
-        console.log("Fetched profile settings from IPFS:", profileSettingsRes);
         if (profileSettingsRes?.error) {
           return message.error(
             `Failed to fetch profile settings: ${profileSettingsRes?.error}`
           );
         }
-        console.log("Parsed settings:", profileSettingsRes);
         settingsFormData.setFieldsValue(profileSettingsRes);
         setAppearanceSettings(profileSettingsRes);
       }
@@ -237,7 +233,6 @@ export default function Profile({ params }) {
           );
         }
         dataObj.avatar = `${PINATA_GATEWAY_URL}/ipfs/${uploadRes?.cid}`;
-        console.log("Avatar uploaded to IPFS:", dataObj.avatar);
       } else {
         dataObj.avatar = profile?.avatar || "";
       }
@@ -446,10 +441,6 @@ export default function Profile({ params }) {
                                     maxCount={1}
                                     beforeUpload={() => false}
                                     onChange={({ fileList }) => {
-                                      console.log(
-                                        "Avatar changed",
-                                        fileList[0]
-                                      );
                                       const file = fileList[0];
                                       if (!file) {
                                         setAvatarFile(null);
@@ -845,10 +836,6 @@ export default function Profile({ params }) {
                             form={settingsFormData}
                             initialValues={initialAppearanceSettings}
                             onValuesChange={(changedValues, allValues) => {
-                              console.log(
-                                "Appearance settings changed:",
-                                allValues
-                              );
                               const colorFields = [
                                 "accentColor",
                                 "textColor",

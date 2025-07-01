@@ -174,7 +174,6 @@ export default function Home() {
     setLoading(true);
     try {
       const handleTokenId = await linkFolioContract.handleToTokenId(handle);
-      console.log("Claiming handle token ID", handleTokenId);
       // if handleTokenId is not 0n, it means the handle is already taken
       if (handleTokenId !== 0n) {
         return message.error(
