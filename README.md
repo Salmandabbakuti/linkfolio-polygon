@@ -19,7 +19,7 @@ Craft your unique bio, avatar, and links to social media as properties and attri
 
 ![lfv04-appearance-settings-form-sc](https://github.com/user-attachments/assets/322e5940-ab27-4deb-ac13-49b3da1526e4)
 
-**Contract Address:** [0x139447bD6f8d685a0A6e34dbBbf50377efB37DB6](https://testnet.neroscan.io/address/0x139447bD6f8d685a0A6e34dbBbf50377efB37DB6?tab=Transactions). Deployed on Nerochain Testnet.
+**Contract Address:** [0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4](https://neroscan.io/address/0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4?tab=Transactions). Deployed on Nerochain Mainnet.
 
 ## Getting Started
 
@@ -35,7 +35,7 @@ npm install
 
 npx hardhat compile
 
-npx hardhat ignition deploy ./ignition/modules/LinkFolio.ts --network neroTestnet
+npx hardhat ignition deploy ./ignition/modules/LinkFolio.ts --network neroMainnet
 ```
 
 ### Paymaster and AA Integration
@@ -56,7 +56,11 @@ where the user is prompted to sign a message to create a profile, post or note. 
 
 ### ChangeLog
 
-#### 0.4.0
+#### 0.4.2 (Mainnet)
+
+- Mainnet deployment of contract, subgraph and client application.
+
+#### 0.4.1
 
 - Added comprehensive appearance customization for profiles with live preview.
 - Introduced tipping functionality for notes, sending tips directly to profile owners.

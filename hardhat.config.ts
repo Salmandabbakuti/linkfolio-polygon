@@ -19,6 +19,10 @@ const config: HardhatUserConfig = {
     neroTestnet: {
       url: "https://rpc-testnet.nerochain.io",
       accounts
+    },
+    neroMainnet: {
+      url: "https://rpc.nerochain.io",
+      accounts
     }
   }
 };

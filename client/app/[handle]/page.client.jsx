@@ -205,8 +205,8 @@ export default function Profile({ params }) {
 
   const onFinish = async (dataObj) => {
     if (!account) return message.error("Please connect your wallet first");
-    if (selectedNetworkId !== "eip155:689")
-      return message.error("Please switch to NERO Testnet");
+    if (selectedNetworkId !== "eip155:1689")
+      return message.error("Please switch to NERO Mainnet");
     const tokenId = profile?.id;
     setLoading({ ...loading, write: true });
     const categoryVal = categoryArr.indexOf(dataObj?.category);
@@ -327,8 +327,8 @@ export default function Profile({ params }) {
   const handleDeleteProfile = async () => {
     if (!profile?.id) return message.error("Profile not found");
     if (!account) return message.error("Please connect your wallet first");
-    if (selectedNetworkId !== "eip155:689")
-      return message.error("Please switch to Polygon Amoy Testnet");
+    if (selectedNetworkId !== "eip155:1689")
+      return message.error("Please switch to NERO Mainnet");
     setLoading({ ...loading, write: true });
     try {
       const ethersProvider = new BrowserProvider(walletProvider);

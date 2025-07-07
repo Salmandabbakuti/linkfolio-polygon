@@ -2,9 +2,9 @@ import { Client, Presets } from "userop";
 import { linkFolioContract } from ".";
 
 // Chain configuration
-const NERO_RPC_URL = "https://rpc-testnet.nerochain.io";
-const BUNDLER_URL = "https://bundler-testnet.nerochain.io";
-const PAYMASTER_URL = "https://paymaster-testnet.nerochain.io";
+const NERO_RPC_URL = "https://rpc.nerochain.io";
+const BUNDLER_URL = "https://bundler-mainnet.nerochain.io";
+const PAYMASTER_URL = "https://paymaster-mainnet.nerochain.io";
 const API_KEY =
   process.env.NEXT_PUBLIC_NERO_PLATFORM_API_KEY || "your_api_key_here";
 

@@ -4,12 +4,11 @@ import "@ant-design/v5-patch-for-react-19";
 import { ConfigProvider, theme } from "antd";
 import { createAppKit } from "@reown/appkit/react";
 import { EthersAdapter } from "@reown/appkit-adapter-ethers";
-import { mainnet, arbitrum } from "@reown/appkit/networks";
 import { neroTestnetChain, neroMainnetChain } from "@/app/utils";
 
 // 1. Get projectId at https://cloud.reown.com
 const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID;
-const networks = [neroTestnetChain, neroMainnetChain, mainnet, arbitrum];
+const networks = [neroMainnetChain, neroTestnetChain];
 
 // 2. Create a metadata object
 const metadata = {
@@ -26,7 +25,7 @@ createAppKit({
   metadata,
   networks,
   projectId,
-  defaultNetwork: neroTestnetChain, // Default network to use
+  defaultNetwork: neroMainnetChain, // Default network to use
   allowUnsupportedChain: false,
   chainImages: {
     689: "https://testnet.neroscan.io/favicon.svg",

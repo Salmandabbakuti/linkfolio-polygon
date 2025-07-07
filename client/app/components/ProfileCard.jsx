@@ -78,8 +78,8 @@ export default function ProfileCard({
     if (noteInput.length < 1 || noteInput.length > 280)
       return message.error("Note must be between 1 and 280 characters");
     if (!account) return message.error("Please connect your wallet first");
-    if (selectedNetworkId !== "eip155:689")
-      return message.error("Please switch to NERO Testnet");
+    if (selectedNetworkId !== "eip155:1689")
+      return message.error("Please switch to NERO Mainnet");
 
     // Validate tip amount
     const finalTipAmount = tipAmount || "0";
@@ -135,8 +135,8 @@ export default function ProfileCard({
     if (postInput.length < 1 || postInput.length > 1000)
       return message.error("Post must be between 1 and 1000 characters");
     if (!account) return message.error("Please connect your wallet first");
-    if (selectedNetworkId !== "eip155:689")
-      return message.error("Please switch to NERO Testnet");
+    if (selectedNetworkId !== "eip155:1689")
+      return message.error("Please switch to NERO Mainnet");
     setLoading((prev) => ({ ...prev, createPost: true }));
     try {
       const provider = new BrowserProvider(walletProvider);

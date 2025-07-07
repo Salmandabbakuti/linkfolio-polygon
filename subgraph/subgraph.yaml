@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: LinkFolio
-    network: nero-evm-testnet
+    network: nero-evm-mainnet
     source:
-      address: "0x139447bD6f8d685a0A6e34dbBbf50377efB37DB6"
+      address: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4"
       abi: LinkFolio
-      startBlock: 7931271
+      startBlock: 6488434
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

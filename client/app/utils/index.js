@@ -86,14 +86,10 @@ export const neroMainnetChain = defineChain({
   }
 });
 
-// nero testnet provider
-const defaultProvider = new JsonRpcProvider(
-  "https://rpc-testnet.nerochain.io",
-  689,
-  {
-    staticNetwork: true
-  }
-);
+// nero mainnet provider
+const defaultProvider = new JsonRpcProvider("https://rpc.nerochain.io", 1689, {
+  staticNetwork: true
+});
 
 const linkFolioContractABI = [
   "function createProfile(string _name, string _handle, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links, address _eoa, string _settingsHash)",
@@ -114,7 +110,7 @@ export const linkFolioContract = new Contract(
 
 const subgraphUrl =
   process.env.NEXT_PUBLIC_SUBGRAPH_API_URL ||
-  "https://subgraph.testnet.nero.metaborong.com/subgraphs/name/linkfolio-nero";
+  "https://subgraph.mainnet.nero.metaborong.com/subgraphs/name/linkfolio-nero";
 
 export const subgraphClient = new GraphQLClient(subgraphUrl);
 
