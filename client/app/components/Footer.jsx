@@ -4,10 +4,8 @@ import {
   GithubOutlined,
   TwitterOutlined,
   LinkedinOutlined,
-  HeartFilled,
   RocketOutlined,
-  CrownOutlined,
-  GlobalOutlined
+  CrownOutlined
 } from "@ant-design/icons";
 import Link from "next/link";
 import styles from "./Footer.module.css";
@@ -20,7 +18,7 @@ export default function Footer() {
   const socialLinks = [
     {
       icon: <GithubOutlined />,
-      href: "https://github.com/Salmandabbakuti",
+      href: "https://github.com/Salmandabbakuti/linkfolio-nero",
       label: "GitHub"
     },
     {
@@ -148,10 +146,11 @@ export default function Footer() {
                 >
                   {[
                     { name: "NERO Chain", color: "#6366f1" },
-                    { name: "Reown", color: "#ec4899" },
-                    { name: "Next.js", color: "#000000" },
-                    { name: "Ant Design", color: "#1677ff" },
-                    { name: "Account Abstraction", color: "#10b981" }
+                    { name: "TheGraph", color: "#10b981" },
+                    { name: "Next.js", color: "#fdfdfd" },
+                    { name: "AppKit", color: "#ec4899" },
+                    { name: "ethers.js", color: "#f97316" },
+                    { name: "Ant Design", color: "#1677ff" }
                   ].map((tech, index) => (
                     <span
                       key={index}
@@ -187,10 +186,7 @@ export default function Footer() {
                       gap: "4px"
                     }}
                   >
-                    <GlobalOutlined />
-                    Built with{" "}
-                    <HeartFilled style={{ color: "var(--error-color)" }} /> for
-                    the decentralized web
+                    Built with ❤️ for the decentralized web
                   </Text>
                 </div>
               </Space>
@@ -259,7 +255,7 @@ export default function Footer() {
                   fontWeight: "var(--font-weight-medium)"
                 }}
               >
-                v0.4.8 • All systems operational
+                v0.4.9 • All systems operational
               </Text>
             </div>
           </Col>

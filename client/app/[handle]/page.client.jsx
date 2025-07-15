@@ -70,6 +70,23 @@ const { Title } = Typography;
 
 const categoryArr = ["Personal", "Creator", "Business"];
 
+// Font family options for the appearance settings
+const fontFamilies = [
+  { label: "Inter", value: "Inter, sans-serif" },
+  { label: "Roboto", value: "Roboto, sans-serif" },
+  { label: "Arial", value: "Arial, Helvetica, sans-serif" },
+  { label: "Poppins", value: "Poppins, sans-serif" },
+  { label: "Helvetica", value: "Helvetica, Arial, sans-serif" },
+  { label: "Times New Roman", value: "'Times New Roman', Times, serif" },
+  { label: "Courier New", value: "'Courier New', Courier, monospace" },
+  { label: "Verdana", value: "Verdana, Geneva, sans-serif" },
+  { label: "Georgia", value: "Georgia, serif" },
+  { label: "Cursive", value: "cursive" },
+  { label: "Tahoma", value: "Tahoma, Geneva, sans-serif" },
+  { label: "Trebuchet MS", value: "'Trebuchet MS', Helvetica, sans-serif" },
+  { label: "System UI", value: "system-ui, sans-serif" }
+];
+
 export default function Profile({ params }) {
   const { handle } = use(params);
 
@@ -132,6 +149,42 @@ export default function Profile({ params }) {
       );
     }
   }, [mode, profile]);
+
+  // Warn about unsaved changes on reload, back button, or tab close
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (mode === "edit") {
+        event.preventDefault();
+        event.returnValue =
+          "You may have unsaved changes. Are you sure you want to leave?";
+        return "You may have unsaved changes. Are you sure you want to leave?";
+      }
+    };
+
+    const handlePopState = (event) => {
+      if (mode === "edit") {
+        const confirmLeave = window.confirm(
+          "You may have unsaved changes. Are you sure you want to leave?"
+        );
+        if (!confirmLeave) {
+          // Push the current state back to prevent navigation
+          window.history.pushState(null, "", window.location.href);
+        }
+      }
+    };
+
+    if (mode === "edit") {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener("popstate", handlePopState);
+      // Push a state to handle back button
+      window.history.pushState(null, "", window.location.href);
+    }
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [mode]);
 
   const resolveAAWalletAddress = async () => {
     if (!walletProvider) return;
@@ -279,7 +332,7 @@ export default function Profile({ params }) {
         );
         console.log("Create Profile Tx:", createOpTx);
         message.success(
-          "Profile created successfully. Redirecting in a few..."
+          "Profile created successfully. Redirecting in 5 seconds..."
         );
         // fetchProfile in 5 seconds to get the new profile
         setTimeout(() => {
@@ -305,7 +358,7 @@ export default function Profile({ params }) {
       );
       console.log("Update Profile Tx:", updateOpTx);
       message.success(
-        "Profile updated successfully. Redirecting to view mode in a few..."
+        "Profile updated successfully. Redirecting to view mode in 5 seconds..."
       );
       // fetchProfile in 5 seconds to get the updated profile
       setTimeout(() => {
@@ -372,8 +425,13 @@ export default function Profile({ params }) {
                         title="Back"
                         icon={<ArrowLeftOutlined />}
                         onClick={() => {
-                          fetchProfile(); // fetch profile again to ensure accurate data and settings
-                          setMode("view");
+                          const confirmLeave = window.confirm(
+                            "You may have unsaved changes. Are you sure you want to go back?"
+                          );
+                          if (confirmLeave) {
+                            fetchProfile(); // fetch profile again to ensure accurate data and settings
+                            setMode("view");
+                          }
                         }}
                       />
                     )}
@@ -543,6 +601,7 @@ export default function Profile({ params }) {
                                 <Button
                                   key={social.id}
                                   size="small"
+                                  shape="round"
                                   type={
                                     selectedSocials.includes(
                                       social.name.toLowerCase()
@@ -601,8 +660,13 @@ export default function Profile({ params }) {
                               <Button
                                 shape="round"
                                 onClick={() => {
-                                  fetchProfile(); // fetch profile again to ensure accurate data and settings
-                                  setMode("view");
+                                  const confirmLeave = window.confirm(
+                                    "You may have unsaved changes. Are you sure you want to go back?"
+                                  );
+                                  if (confirmLeave) {
+                                    fetchProfile(); // fetch profile again to ensure accurate data and settings
+                                    setMode("view");
+                                  }
                                 }}
                               >
                                 Back
@@ -864,57 +928,16 @@ export default function Profile({ params }) {
                                       name="fontFamily"
                                     >
                                       <Select
-                                        options={[
-                                          {
-                                            label: "Inter",
-                                            value: "Inter, sans-serif"
-                                          },
-                                          {
-                                            label: "Roboto",
-                                            value: "Roboto, sans-serif"
-                                          },
-                                          {
-                                            label: "Arial",
-                                            value:
-                                              "Arial, Helvetica, sans-serif"
-                                          },
-                                          {
-                                            label: "Helvetica",
-                                            value:
-                                              "Helvetica, Arial, sans-serif"
-                                          },
-                                          {
-                                            label: "Times New Roman",
-                                            value:
-                                              "'Times New Roman', Times, serif"
-                                          },
-                                          {
-                                            label: "Courier New",
-                                            value:
-                                              "'Courier New', Courier, monospace"
-                                          },
-                                          {
-                                            label: "Verdana",
-                                            value: "Verdana, Geneva, sans-serif"
-                                          },
-                                          {
-                                            label: "Georgia",
-                                            value: "Georgia, serif"
-                                          },
-                                          {
-                                            label: "Tahoma",
-                                            value: "Tahoma, Geneva, sans-serif"
-                                          },
-                                          {
-                                            label: "Trebuchet MS",
-                                            value:
-                                              "'Trebuchet MS', Helvetica, sans-serif"
-                                          },
-                                          {
-                                            label: "System UI",
-                                            value: "system-ui, sans-serif"
-                                          }
-                                        ]}
+                                        options={fontFamilies.map((font) => ({
+                                          label: (
+                                            <span
+                                              style={{ fontFamily: font.value }}
+                                            >
+                                              {font.label}
+                                            </span>
+                                          ),
+                                          value: font.value
+                                        }))}
                                       />
                                     </Form.Item>
                                   </Col>
@@ -1128,14 +1151,6 @@ export default function Profile({ params }) {
               title={
                 <>
                   Preview{" "}
-                  <Tag
-                    color="success"
-                    style={{
-                      fontSize: "9px"
-                    }}
-                  >
-                    New
-                  </Tag>
                   <ExclamationCircleOutlined
                     title="May contain unsaved changes"
                     style={{
@@ -1303,8 +1318,8 @@ export default function Profile({ params }) {
               alignItems: "center"
             }}
           >
-            <Button type="link" icon={"🔗"} style={{ marginTop: "20px" }}>
-              Create Your LinkFolio
+            <Button type="link" style={{ marginTop: "20px" }}>
+              🔗 Create Your LinkFolio
               <ArrowRightOutlined />
             </Button>
           </Link>

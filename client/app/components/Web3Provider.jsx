@@ -60,45 +60,10 @@ export default function Web3Provider({ children }) {
         token: {
           // Colors
           colorPrimary: "#6366f1", // Primary indigo
-          colorSuccess: "#10b981", // Green
-          colorWarning: "#f59e0b", // Amber
-          colorError: "#ef4444", // Red
-          colorInfo: "#3b82f6", // Blue
-
           // Background colors
           colorBgContainer: "#1a1a1a", // Card backgrounds
-          colorBgElevated: "#1f1f1f", // Modal, dropdown backgrounds
-          colorBgLayout: "#0f0f0f", // Page background
+          colorBgElevated: "#293142", // Modal, dropdown backgrounds
           colorBgSpotlight: "#262626", // Hover states
-
-          // Text colors
-          colorText: "#ffffff", // Primary text
-          colorTextSecondary: "#a3a3a3", // Secondary text
-          colorTextTertiary: "#737373", // Muted text
-          colorTextQuaternary: "#525252", // Disabled text
-
-          // Border colors
-          colorBorder: "#404040", // Default border
-          colorBorderSecondary: "#262626", // Secondary border
-
-          // Typography
-          fontFamily:
-            'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          fontSize: 14,
-          fontSizeHeading1: 32,
-          fontSizeHeading2: 24,
-          fontSizeHeading3: 20,
-          fontSizeHeading4: 16,
-
-          // Spacing
-          borderRadius: 12,
-          borderRadiusLG: 16,
-          borderRadiusSM: 8,
-
-          // Shadows
-          boxShadow:
-            "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.1)",
-          boxShadowSecondary: "0 2px 4px -1px rgba(0, 0, 0, 0.2)",
 
           // Layout
           wireframe: false,
@@ -191,13 +156,6 @@ export default function Web3Provider({ children }) {
             iconSize: 16
           },
 
-          // Modal customization
-          Modal: {
-            colorBgElevated: "#1f1f1f",
-            colorBgMask: "rgba(0, 0, 0, 0.7)",
-            borderRadiusLG: 16
-          },
-
           // Dropdown customization
           Dropdown: {
             colorBgElevated: "#1f1f1f",
@@ -207,7 +165,7 @@ export default function Web3Provider({ children }) {
 
           // Menu customization
           Menu: {
-            colorBgContainer: "#1f1f1f",
+            colorBgContainer: "rgba(255, 255, 255, 0.05)",
             colorText: "#ffffff",
             colorTextSecondary: "#a3a3a3",
             itemBg: "transparent",
@@ -230,13 +188,6 @@ export default function Web3Provider({ children }) {
             colorText: "#ffffff"
           },
 
-          // Notification customization
-          Notification: {
-            colorBgElevated: "#1f1f1f",
-            borderRadiusLG: 12,
-            colorText: "#ffffff"
-          },
-
           // Divider customization
           Divider: {
             colorSplit: "#404040",
@@ -254,15 +205,6 @@ export default function Web3Provider({ children }) {
           Badge: {
             colorBgContainer: "#6366f1",
             colorText: "#ffffff"
-          },
-
-          // Table customization
-          Table: {
-            colorBgContainer: "rgba(255, 255, 255, 0.05)",
-            colorText: "#ffffff",
-            colorTextHeading: "#ffffff",
-            colorBgHeader: "rgba(255, 255, 255, 0.02)",
-            borderColor: "rgba(255, 255, 255, 0.1)"
           }
         }
       }}

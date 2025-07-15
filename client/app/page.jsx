@@ -233,7 +233,7 @@ export default function Home() {
             }))}
           />
         </div>
-      </section>{" "}
+      </section>
       {/* Profile Customization Showcase Section */}
       <section className={styles.customizationSection}>
         <div className="container">

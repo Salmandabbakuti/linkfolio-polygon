@@ -123,20 +123,13 @@ export default function Hero({ onGetStarted }) {
                 boxShadow: "var(--shadow-colored)",
                 border: "none"
               }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow = "var(--shadow-2xl)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "var(--shadow-colored)";
-              }}
             >
               Create Your LinkFolio
               <ArrowRightOutlined />
             </Button>
             <Link href="/explore">
               <Button
+                type="default"
                 size="large"
                 icon={<CompassOutlined />}
                 style={{
@@ -150,18 +143,8 @@ export default function Hero({ onGetStarted }) {
                   border: "1px solid rgba(102, 126, 234, 0.3)",
                   color: "var(--primary-color)"
                 }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = "rgba(102, 126, 234, 0.2)";
-                  e.target.style.transform = "translateY(-1px)";
-                  e.target.style.borderColor = "rgba(102, 126, 234, 0.5)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = "rgba(102, 126, 234, 0.1)";
-                  e.target.style.transform = "translateY(0)";
-                  e.target.style.borderColor = "rgba(102, 126, 234, 0.3)";
-                }}
               >
-                Explore Profiles
+                Explore
               </Button>
             </Link>
           </Space>
