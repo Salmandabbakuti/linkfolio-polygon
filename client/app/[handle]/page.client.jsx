@@ -37,7 +37,8 @@ import {
   ExpandAltOutlined,
   SaveOutlined,
   CompressOutlined,
-  ArrowLeftOutlined
+  ArrowLeftOutlined,
+  RollbackOutlined
 } from "@ant-design/icons";
 import {
   useAppKitProvider,
@@ -111,6 +112,9 @@ export default function Profile({ params }) {
   const [aaWalletAddress, setAAWalletAddress] = useState(null);
   const [selectedSocials, setSelectedSocials] = useState([]);
   const [appearanceSettings, setAppearanceSettings] = useState(
+    initialAppearanceSettings
+  );
+  const [savedAppearanceSettings, setSavedAppearanceSettings] = useState(
     initialAppearanceSettings
   );
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
@@ -247,6 +251,7 @@ export default function Profile({ params }) {
         }
         settingsFormData.setFieldsValue(profileSettingsRes);
         setAppearanceSettings(profileSettingsRes);
+        setSavedAppearanceSettings(profileSettingsRes);
       }
     } catch (err) {
       console.error("Failed to fetch profile:", err);
@@ -702,7 +707,7 @@ export default function Profile({ params }) {
                       children: (
                         <>
                           <Collapse
-                            defaultActiveKey={["templates"]}
+                            // defaultActiveKey={["templates"]}
                             // activeKey={["templates"]}
                             // onChange={setTemplateCollapseActiveKey}
                             style={{ marginBottom: "16px" }}
@@ -899,6 +904,7 @@ export default function Profile({ params }) {
                             layout="vertical"
                             form={settingsFormData}
                             initialValues={initialAppearanceSettings}
+                            style={{ display: "flex", flexDirection: "column" }}
                             onValuesChange={(changedValues, allValues) => {
                               const colorFields = [
                                 "accentColor",
@@ -918,6 +924,29 @@ export default function Profile({ params }) {
                               setAppearanceSettings(allValues);
                             }}
                           >
+                            <Button
+                              type="text"
+                              icon={<RollbackOutlined />}
+                              title={
+                                profile?.settingsHash
+                                  ? "Reset appearance to your last saved settings"
+                                  : "Reset appearance to default theme settings"
+                              }
+                              style={{
+                                alignSelf: "flex-end"
+                              }}
+                              onClick={() => {
+                                settingsFormData.setFieldsValue(
+                                  savedAppearanceSettings
+                                );
+                                setAppearanceSettings(savedAppearanceSettings);
+                                message.success(
+                                  profile?.settingsHash
+                                    ? "Reset to saved settings!"
+                                    : "Reset to default settings!"
+                                );
+                              }}
+                            />
                             <Row gutter={16}>
                               <Col xs={24} lg={12}>
                                 {/* Font Settings Row */}

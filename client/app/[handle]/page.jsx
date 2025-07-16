@@ -28,16 +28,17 @@ export async function generateMetadata({ params }) {
     );
   }
 
-  return {
+  const metadata = {
     title,
     description,
     category: "technology",
     openGraph: {
       title: `${title} | ${siteName}`,
       description,
-      type: "profile",
+      type: "website",
       url,
       siteName,
+      locale: "en_US",
       images: image
         ? [{ url: image, width: 1200, height: 630, alt: handle }]
         : []
@@ -54,6 +55,8 @@ export async function generateMetadata({ params }) {
     },
     robots: "index, follow"
   };
+  console.log(`Generated metadata for /${handle}:`, metadata);
+  return metadata;
 }
 
 export default Profile;
