@@ -126,7 +126,8 @@ const features = [
     ),
     title: "On-Chain Metadata",
     description:
-      "All profile data is stored directly on-chain, ensuring permanence, integrity, and decentralization."
+      "All profile data is stored directly on-chain, ensuring permanence, integrity, and decentralization.",
+    highlight: true
   },
   {
     icon: (
@@ -144,7 +145,8 @@ const features = [
     ),
     title: "Social Features",
     description:
-      "Receive tips, messages, and interact with your community through built-in social features."
+      "Receive tips, messages, and interact with your community through built-in social features.",
+    highlight: true
   },
   {
     icon: (

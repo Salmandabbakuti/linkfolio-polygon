@@ -56,6 +56,16 @@ where the user is prompted to sign a message to create a profile, post or note. 
 
 ### ChangeLog
 
+#### 0.5.0
+
+- Added font family preview in appearance settings dropdown and new font options (Poppins, Cursive)
+- Implemented unsaved changes warnings on leave while editing and improved profile card interactions
+- Added avatar and banner preview capabilities using Ant Design Image components
+- Enhanced profile tabs with URL state management and consistent font styles
+- Added profile creation and update timestamps in the profile card
+- Enhanced ProfileCard with dynamic styling system and improved layout architecture
+- Updated footer styling and optimized codebase by cleaning up unused Ant Design theme tokens
+
 #### 0.4.2 (Mainnet)
 
 - Mainnet deployment of contract, subgraph and client application.

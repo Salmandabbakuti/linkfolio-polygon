@@ -393,7 +393,7 @@ export default function ProfileCard({
           <h2
             style={{
               ...dynamicStyles.text.primary,
-              fontWeight: "bold",
+              fontSize: appearanceSettings.fontSize * 1.6 + "px",
               margin: "16px 0 8px 0"
             }}
           >
@@ -707,6 +707,28 @@ export default function ProfileCard({
             }
           ]}
         />
+        {/* Card Footer - Profile Timestamps */}
+        {profile?.createdAt && (
+          <>
+            <Divider />
+            <div
+              style={{
+                fontSize: "12px",
+                textAlign: "center"
+              }}
+            >
+              <small>
+                Created at:{" "}
+                {dayjs(profile.createdAt * 1000).format("MMM D, YYYY h:mm A")}
+              </small>
+              {" • "}
+              <small>
+                Last updated:{" "}
+                {dayjs(profile.updatedAt * 1000).format("MMM D, YYYY h:mm A")}
+              </small>
+            </div>
+          </>
+        )}
       </div>
     </Badge.Ribbon>
   );

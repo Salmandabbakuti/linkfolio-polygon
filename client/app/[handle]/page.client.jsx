@@ -967,6 +967,7 @@ export default function Profile({ params }) {
                                     >
                                       <ColorPicker
                                         showText
+                                        allowClear
                                         format="hex"
                                         presets={[
                                           {
@@ -995,19 +996,24 @@ export default function Profile({ params }) {
                                     >
                                       <ColorPicker
                                         showText
+                                        allowClear
                                         format="hex"
                                         presets={[
                                           {
-                                            label: "Text Colors",
+                                            label: "Recommended",
                                             colors: [
                                               "#000000",
-                                              "#262626",
-                                              "#434343",
-                                              "#595959",
-                                              "#8C8C8C",
-                                              "#FFFFFF",
-                                              "#F5F5F5",
-                                              "#FAFAFA"
+                                              "#2c3e50",
+                                              "#4a4a4a",
+                                              "#5d5d5d",
+                                              "#1a202c",
+                                              "#2b6cb0",
+                                              "#4c51bf",
+                                              "#553c9a",
+                                              "#744210",
+                                              "#975a16",
+                                              "#c53030",
+                                              "#ffffff"
                                             ]
                                           }
                                         ]}
@@ -1218,25 +1224,6 @@ export default function Profile({ params }) {
             variant="outlined"
             hoverable
             loading={loading?.read}
-            actions={[
-              <div
-                key="powered-by"
-                style={{
-                  fontSize: "10px",
-                  fontWeight: "bold",
-                  color: "#999"
-                }}
-              >
-                Powered by{" "}
-                <a
-                  href={window.location.origin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  🔗 LinkFolio
-                </a>
-              </div>
-            ]}
             extra={
               <Space>
                 {isProfileOwner && (
