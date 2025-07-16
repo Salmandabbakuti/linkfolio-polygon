@@ -255,7 +255,7 @@ export default function Footer() {
                   fontWeight: "var(--font-weight-medium)"
                 }}
               >
-                v0.4.9 • All systems operational
+                v0.5.0 • All systems operational
               </Text>
             </div>
           </Col>

@@ -11,7 +11,8 @@ import {
   Typography,
   Divider,
   Tag,
-  Badge
+  Badge,
+  Image
 } from "antd";
 import {
   LinkOutlined,
@@ -176,47 +177,6 @@ export default function ProfileCard({
       setLoading((prev) => ({ ...prev, createPost: false }));
     }
   };
-  const items = Object.keys(profile?.links || {})
-    .map((key) => {
-      const link = profile?.links[key];
-      if (link) {
-        const social = supportedSocials.find((s) => s.id === key);
-        return {
-          key,
-          children: (
-            <Button
-              type={
-                appearanceSettings?.linkStyle === "button" ? "default" : "link"
-              }
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: appearanceSettings.accentColor || "#ff9900",
-                fontWeight:
-                  appearanceSettings.linkStyle === "bold" ? "bold" : "normal",
-                textDecoration:
-                  appearanceSettings.linkStyle === "underline"
-                    ? "underline"
-                    : "none",
-                borderRadius:
-                  appearanceSettings.buttonShape === "round"
-                    ? "6px"
-                    : appearanceSettings.buttonShape === "pill"
-                    ? "50px"
-                    : "0px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px"
-              }}
-            >
-              {social?.icon || <LinkOutlined />} {social?.name || "-"}
-            </Button>
-          )
-        };
-      }
-    })
-    .filter(Boolean);
   // Generate dynamic styles based on appearance settings
   const dynamicStyles = useMemo(() => {
     const {
@@ -229,11 +189,11 @@ export default function ProfileCard({
       linkStyle = "bold",
       textColor = "#222",
       avatarShape = "circle",
-      banner = "",
-      customCSS = ""
-    } = appearanceSettings; // Helper function to convert hex to rgba
+      banner = ""
+    } = appearanceSettings;
+
+    // Helper function to convert hex to rgba
     const hexToRgba = (hex, opacity) => {
-      // Handle case where hex might not be a string or might not start with #
       if (!hex || typeof hex !== "string")
         return `rgba(255, 153, 0, ${opacity})`;
 
@@ -245,10 +205,16 @@ export default function ProfileCard({
       const b = parseInt(hexValue.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     };
-    const containerStyle = {
+
+    // Base styles applied to entire component
+    const baseStyles = {
       fontFamily,
       fontSize: `${fontSize}px`,
-      color: textColor,
+      color: textColor
+    };
+
+    const containerStyle = {
+      ...baseStyles,
       borderRadius:
         cardStyle === "glass"
           ? "20px"
@@ -263,7 +229,6 @@ export default function ProfileCard({
           : "none",
       border: cardStyle === "bordered" ? `1.5px solid ${accentColor}` : "none",
       backdropFilter: cardStyle === "glass" ? "blur(20px)" : "none",
-      // Use backgroundColor and backgroundImage separately to avoid conflicts
       backgroundColor: background,
       backgroundImage:
         cardStyle === "glass"
@@ -292,112 +257,169 @@ export default function ProfileCard({
           ? "50px"
           : "0px",
       backgroundColor: accentColor,
-      borderColor: accentColor
+      borderColor: accentColor,
+      fontFamily,
+      fontSize: `${fontSize}px`
     };
 
-    const linkTextStyle = {
+    const inputStyle = {
+      backgroundColor:
+        cardStyle === "glass" ? "rgba(255,255,255,0.1)" : undefined,
+      borderColor: accentColor,
+      color: textColor,
+      fontFamily,
+      fontSize: `${fontSize}px`
+    };
+
+    const linkButtonStyle = {
+      color: accentColor,
       fontWeight: linkStyle === "bold" ? "bold" : "normal",
       textDecoration: linkStyle === "underline" ? "underline" : "none",
-      color: linkStyle === "normal" ? textColor : accentColor
+      borderRadius:
+        buttonShape === "round"
+          ? "6px"
+          : buttonShape === "pill"
+          ? "50px"
+          : "0px",
+      fontFamily,
+      fontSize: `${fontSize}px`
     };
 
-    const bannerStyle = {
-      backgroundImage: `url(${banner})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      height: "120px",
-      width: "calc(100% + 48px)",
-      margin: "-24px -24px 24px -24px",
-      borderTopLeftRadius: containerStyle.borderRadius,
-      borderTopRightRadius: containerStyle.borderRadius
+    const textStyles = {
+      primary: { ...baseStyles, color: accentColor },
+      secondary: { ...baseStyles, color: textColor, opacity: 0.7 },
+      muted: { ...baseStyles, color: textColor, opacity: 0.6 }
+    };
+
+    const tagStyle = {
+      backgroundColor: accentColor,
+      color: "white",
+      borderRadius: buttonStyle.borderRadius,
+      fontFamily,
+      fontSize: `${Math.max(fontSize - 2, 12)}px`
     };
 
     return {
+      base: baseStyles,
       container: containerStyle,
       avatar: avatarStyle,
       button: buttonStyle,
-      linkText: linkTextStyle,
-      banner: bannerStyle,
+      input: inputStyle,
+      linkButton: linkButtonStyle,
+      text: textStyles,
+      tag: tagStyle,
       accent: accentColor,
-      custom: customCSS,
-      hexToRgba
+      hexToRgba,
+      banner: {
+        backgroundImage: `url(${banner})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: "120px",
+        width: "calc(100% + 48px)",
+        margin: "-24px -24px 24px -24px",
+        borderTopLeftRadius: containerStyle.borderRadius,
+        borderTopRightRadius: containerStyle.borderRadius
+      }
     };
   }, [appearanceSettings]);
 
+  // Apply base styles to the entire component
+  const componentStyle = {
+    ...dynamicStyles.base,
+    ...dynamicStyles.container
+  };
+
+  const items = Object.keys(profile?.links || {})
+    .map((key) => {
+      const link = profile?.links[key];
+      if (link) {
+        const social = supportedSocials.find((s) => s.id === key);
+        return {
+          key,
+          children: (
+            <Button
+              type={
+                appearanceSettings?.linkStyle === "button" ? "default" : "link"
+              }
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={dynamicStyles.linkButton}
+            >
+              {social?.icon || <LinkOutlined />} {social?.name || "-"}
+            </Button>
+          )
+        };
+      }
+    })
+    .filter(Boolean);
+
   return (
-    <Badge.Ribbon text={profile?.category} color={dynamicStyles.accent}>
-      <div style={dynamicStyles.container}>
+    <Badge.Ribbon
+      text={profile?.category}
+      color={dynamicStyles.accent}
+      style={dynamicStyles.base}
+    >
+      <div style={componentStyle}>
         {/* Banner */}
-        <div style={dynamicStyles.banner} />
+        {appearanceSettings.banner && (
+          <Image
+            src={appearanceSettings.banner}
+            alt="Profile Banner"
+            preview={{
+              mask: ""
+            }}
+            width={"calc(100% + 48px)"}
+            height={120}
+            style={dynamicStyles.banner}
+          />
+        )}
 
         <div style={{ textAlign: "center" }}>
-          <Avatar
+          <Image
             src={
               profile?.avatar?.fileList?.[0]?.thumbUrl ||
               profile?.avatar ||
               `https://api.dicebear.com/5.x/open-peeps/svg?seed=${profile?.handle}`
             }
-            alt="Profile"
-            size={100}
-            shape={
-              appearanceSettings.avatarShape === "square" ? "square" : "circle"
-            }
+            alt="Profile Avatar"
+            preview={{
+              mask: ""
+            }}
+            width={100}
+            height={100}
             style={dynamicStyles.avatar}
           />
-          <h2 style={{ color: dynamicStyles.accent, margin: "16px 0 8px 0" }}>
+          <h2
+            style={{
+              ...dynamicStyles.text.primary,
+              fontWeight: "bold",
+              margin: "16px 0 8px 0"
+            }}
+          >
             {profile?.name}
           </h2>
-          <p
-            style={{
-              color: dynamicStyles.container.color,
-              opacity: 0.8,
-              margin: "0 0 8px 0"
-            }}
-          >
+          <p style={{ ...dynamicStyles.text.secondary, margin: "0 0 8px 0" }}>
             @{profile?.handle}
           </p>
-          <p
-            style={{
-              color: dynamicStyles.container.color,
-              margin: "0 0 16px 0"
-            }}
-          >
+          <p style={{ ...dynamicStyles.text.secondary, margin: "0 0 16px 0" }}>
             {profile?.bio}
           </p>
 
-          <Tag
-            title="Category"
-            bordered={false}
-            style={{
-              backgroundColor: dynamicStyles.accent,
-              color: "white",
-              borderRadius: dynamicStyles.button.borderRadius
-            }}
-          >
+          <Tag title="Category" bordered={false} style={dynamicStyles.tag}>
             {profile?.category}
           </Tag>
-          {/* Tag with tip amount stats and eoa address */}
           <Tag
             title="Tips"
             icon={<DollarOutlined />}
             bordered={false}
-            style={{
-              backgroundColor: dynamicStyles.accent,
-              color: "white",
-              borderRadius: dynamicStyles.button.borderRadius,
-              marginLeft: "8px"
-            }}
+            style={{ ...dynamicStyles.tag, marginLeft: "8px" }}
           >
             {formatEther(profile?.tipAmount || 0n)} NERO
           </Tag>
           <Tag
             bordered={false}
-            style={{
-              backgroundColor: dynamicStyles.accent,
-              color: "white",
-              borderRadius: dynamicStyles.button.borderRadius,
-              marginLeft: "8px"
-            }}
+            style={{ ...dynamicStyles.tag, marginLeft: "8px" }}
           >
             <span
               title="Copy EOA address"
@@ -413,8 +435,8 @@ export default function ProfileCard({
               <CopyOutlined style={{ marginLeft: "4px" }} />
             </span>
           </Tag>
-          {/* tabs with links, posts, notes */}
         </div>
+
         <Tabs
           defaultActiveKey="links"
           animated
@@ -424,31 +446,26 @@ export default function ProfileCard({
             {
               key: "links",
               label: (
-                <Typography.Text strong style={{ color: dynamicStyles.accent }}>
+                <Typography.Text strong style={dynamicStyles.text.primary}>
                   Links
                 </Typography.Text>
               ),
-              children: <Descriptions column={2} colon={false} items={items} />
+              children: (
+                <div style={dynamicStyles.base}>
+                  <Descriptions column={2} colon={false} items={items} />
+                </div>
+              )
             },
             {
               key: "posts",
               label: (
-                <Typography.Text
-                  strong
-                  style={{ color: dynamicStyles?.accent }}
-                >
+                <Typography.Text strong style={dynamicStyles.text.primary}>
                   Posts
                 </Typography.Text>
               ),
               children: (
-                <>
-                  <Paragraph
-                    type="secondary"
-                    style={{
-                      color: dynamicStyles.container.color,
-                      opacity: 0.7
-                    }}
-                  >
+                <div style={dynamicStyles.base}>
+                  <Paragraph style={dynamicStyles.text.secondary}>
                     📢 Stay in the loop — see what this creator is sharing with
                     the world.
                   </Paragraph>
@@ -463,15 +480,7 @@ export default function ProfileCard({
                         showCount
                         onChange={(e) => setPostInput(e.target.value)}
                         onPressEnter={handleCreatePost}
-                        style={{
-                          marginBottom: "16px",
-                          backgroundColor:
-                            dynamicStyles.cardStyle === "glass"
-                              ? "rgba(255,255,255,0.1)"
-                              : undefined,
-                          borderColor: dynamicStyles.accent,
-                          color: dynamicStyles.container.color
-                        }}
+                        style={{ ...dynamicStyles.input, marginBottom: "16px" }}
                       />
                       <Button
                         variant="solid"
@@ -484,10 +493,7 @@ export default function ProfileCard({
                     </>
                   )}
                   <Divider />
-                  <Typography.Text
-                    strong
-                    style={{ color: dynamicStyles?.accent }}
-                  >
+                  <Typography.Text strong style={dynamicStyles.text.primary}>
                     Posts ({profile?.posts?.length || 0})
                   </Typography.Text>
                   <List
@@ -512,25 +518,17 @@ export default function ProfileCard({
                             <Space>
                               <Typography.Text
                                 strong
-                                style={{ color: dynamicStyles.accent }}
+                                style={dynamicStyles.text.primary}
                               >
                                 {item?.author?.name}
                               </Typography.Text>
-                              <Typography.Text
-                                type="secondary"
-                                style={{
-                                  color: dynamicStyles.container.color,
-                                  opacity: 0.6
-                                }}
-                              >
+                              <Typography.Text style={dynamicStyles.text.muted}>
                                 {dayjs(item?.createdAt * 1000).fromNow()}
                               </Typography.Text>
                             </Space>
                           }
                           description={
-                            <span
-                              style={{ color: dynamicStyles.container.color }}
-                            >
+                            <span style={dynamicStyles.base}>
                               {item?.content}
                             </span>
                           }
@@ -538,28 +536,19 @@ export default function ProfileCard({
                       </List.Item>
                     )}
                   />
-                </>
+                </div>
               )
             },
             {
               key: "notes",
               label: (
-                <Typography.Text
-                  strong
-                  style={{ color: dynamicStyles?.accent }}
-                >
+                <Typography.Text strong style={dynamicStyles.text.primary}>
                   Notes
                 </Typography.Text>
               ),
               children: (
-                <>
-                  <Paragraph
-                    type="secondary"
-                    style={{
-                      color: dynamicStyles?.container?.color,
-                      opacity: 0.7
-                    }}
-                  >
+                <div style={dynamicStyles.base}>
+                  <Paragraph style={dynamicStyles.text.secondary}>
                     ✍️ Got something to say? Leave a note and make their day!
                     Your notes will be visible to the community.
                   </Paragraph>
@@ -570,15 +559,7 @@ export default function ProfileCard({
                     rows={2}
                     maxLength={280}
                     showCount
-                    style={{
-                      marginBottom: "0.5em",
-                      backgroundColor:
-                        dynamicStyles.cardStyle === "glass"
-                          ? "rgba(255,255,255,0.1)"
-                          : undefined,
-                      borderColor: dynamicStyles?.accent,
-                      color: dynamicStyles?.container?.color
-                    }}
+                    style={{ ...dynamicStyles.input, marginBottom: "0.5em" }}
                   />
                   <Space wrap style={{ marginBottom: "0.5em" }}>
                     {suggestedTips.map((tip) => (
@@ -588,12 +569,11 @@ export default function ProfileCard({
                         variant="solid"
                         onClick={() => setTipAmount(tip.value)}
                         style={{
-                          minWidth: 60,
                           ...dynamicStyles.button,
-                          color: dynamicStyles?.container?.color,
+                          minWidth: 60,
                           backgroundColor:
                             tipAmount === tip.value
-                              ? dynamicStyles?.accent
+                              ? dynamicStyles.accent
                               : undefined
                         }}
                       >
@@ -611,24 +591,18 @@ export default function ProfileCard({
                       step={0.5}
                       precision={2}
                       style={{
+                        ...dynamicStyles.input,
                         maxWidth: 170,
-                        verticalAlign: "middle",
-                        backgroundColor:
-                          dynamicStyles?.cardStyle === "glass"
-                            ? "rgba(255,255,255,0.1)"
-                            : undefined,
-                        borderColor: dynamicStyles?.accent,
-                        color: dynamicStyles?.container?.color
+                        verticalAlign: "middle"
                       }}
                     />
                   </Space>
                   <Typography.Text
-                    type="secondary"
                     style={{
+                      ...dynamicStyles.text.secondary,
                       fontSize: "12px",
                       display: "block",
-                      marginBottom: "16px",
-                      color: dynamicStyles?.container?.color
+                      marginBottom: "16px"
                     }}
                   >
                     💡 Tip will be sent directly to the profile owner
@@ -645,10 +619,7 @@ export default function ProfileCard({
                       : "Submit"}
                   </Button>
                   <Divider />
-                  <Typography.Text
-                    strong
-                    style={{ color: dynamicStyles.accent }}
-                  >
+                  <Typography.Text strong style={dynamicStyles.text.primary}>
                     Notes ({profile?.notes?.length || 0})
                   </Typography.Text>
                   <List
@@ -692,16 +663,12 @@ export default function ProfileCard({
                               <Space wrap>
                                 <Typography.Text
                                   strong
-                                  style={{ color: dynamicStyles.accent }}
+                                  style={dynamicStyles.text.primary}
                                 >
                                   {ellipsisString(item?.author, 8, 5)}
                                 </Typography.Text>
                                 <Typography.Text
-                                  type="secondary"
-                                  style={{
-                                    color: dynamicStyles.container.color,
-                                    opacity: 0.6
-                                  }}
+                                  style={dynamicStyles.text.muted}
                                 >
                                   {dayjs(item?.createdAt * 1000).fromNow()}
                                 </Typography.Text>
@@ -709,11 +676,7 @@ export default function ProfileCard({
                                   <>
                                     <Tag
                                       icon={<DollarOutlined />}
-                                      style={{
-                                        backgroundColor: dynamicStyles.accent,
-                                        color: "white",
-                                        borderColor: dynamicStyles.accent
-                                      }}
+                                      style={dynamicStyles.tag}
                                     >
                                       {formatEther(item?.tipAmount)} NERO
                                     </Tag>
@@ -730,11 +693,7 @@ export default function ProfileCard({
                               </Space>
                             }
                             description={
-                              <span
-                                style={{
-                                  color: dynamicStyles.container.color
-                                }}
-                              >
+                              <span style={dynamicStyles.base}>
                                 {item?.content}
                               </span>
                             }
@@ -743,7 +702,7 @@ export default function ProfileCard({
                       );
                     }}
                   />
-                </>
+                </div>
               )
             }
           ]}
