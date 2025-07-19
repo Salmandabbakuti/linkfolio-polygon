@@ -38,6 +38,36 @@ npx hardhat compile
 npx hardhat ignition deploy ./ignition/modules/LinkFolio.ts --network neroMainnet
 ```
 
+### 2. Deploying Subgraph
+
+> Subgraph will be deployed to NERO Chain's hosted Sandbox environment. Please refer to the [Graph Node documentation](https://thegraph.com/docs/en/indexing/tooling/graph-node/) for more information on how to set up your environment. Update `package.json` scripts to point to your local Graph Node if you are running one.
+
+```bash
+
+cd subgraph
+
+npm install
+
+npm run codegen
+
+npm run create-remote # create a new subgraph on the sandbox environment
+
+npm run deploy-remote # deploy the subgraph to the sandbox environment
+```
+
+### 3.Running the Client
+
+> Copy the `.env.example` file to `.env` and update the environment variables with your own values.
+
+```bash
+cd client
+
+npm install
+
+npm run dev
+```
+Open http://localhost:3000 with your browser to see the result.
+
 ### Paymaster and AA Integration
 
 The core implemtation of Paymaster and Account Abstraction(AA) can be found in [`client/app/utils/aaUtils.js`](client/app/utils/aaUtils.js)
