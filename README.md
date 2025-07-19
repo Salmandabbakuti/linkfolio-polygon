@@ -55,7 +55,7 @@ npm run create-remote # create a new subgraph on the sandbox environment
 npm run deploy-remote # deploy the subgraph to the sandbox environment
 ```
 
-### 3.Running the Client
+### 3. Running the Client
 
 > Copy the `.env.example` file to `.env` and update the environment variables with your own values.
 
@@ -66,6 +66,7 @@ npm install
 
 npm run dev
 ```
+
 Open http://localhost:3000 with your browser to see the result.
 
 ### Paymaster and AA Integration

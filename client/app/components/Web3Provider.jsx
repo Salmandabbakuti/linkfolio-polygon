@@ -41,12 +41,12 @@ createAppKit({
     onramp: false,
     // socials: false, // should be false or provider only
     email: true,
-    connectMethodsOrder: ["wallet", "social", "email"],
+    connectMethodsOrder: ["social", "email", "wallet"],
     emailShowWallets: true,
-    legalCheckbox: true,
-    termsConditionsUrl: "https://example.com/terms",
-    privacyPolicyUrl: "https://example.com/privacy"
-  }
+    legalCheckbox: true
+  },
+  termsConditionsUrl: "https://linkfolio-nero.vercel.app#terms",
+  privacyPolicyUrl: "https://linkfolio-nero.vercel.app#privacy"
 });
 
 export default function Web3Provider({ children }) {
