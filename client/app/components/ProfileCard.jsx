@@ -257,6 +257,7 @@ export default function ProfileCard({
           ? "50px"
           : "0px",
       backgroundColor: accentColor,
+      color: textColor,
       borderColor: accentColor,
       fontFamily,
       fontSize: `${fontSize}px`
