@@ -41,7 +41,7 @@ export default function Explore() {
         orderDirection: "desc",
         where: {
           and: [
-            { eoa: showMyProfiles ? account?.toLowerCase() : undefined },
+            { owner: showMyProfiles ? account?.toLowerCase() : undefined },
             ...(searchQuery
               ? [
                   {
@@ -58,7 +58,7 @@ export default function Explore() {
                       {
                         category_contains_nocase: searchQuery
                       },
-                      { eoa_contains_nocase: searchQuery }
+                      { owner_contains_nocase: searchQuery }
                     ]
                   }
                 ]

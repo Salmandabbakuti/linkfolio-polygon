@@ -6,11 +6,11 @@ export async function generateMetadata({ params }) {
   const { handle } = await params;
 
   //  base metadata for the profile page
-  const url = `https://linkfolio-nero.vercel.app/${handle}`;
+  const url = `https://linkfolio-rho.vercel.app/${handle}`;
   const siteName = "LinkFolio";
   let title = handle;
   let description =
-    "Create and own your digital identity as a soulbound NFT with on-chain metadata, gas-free via NERO Chain’s Paymaster and account abstraction.";
+    "Create and own your digital identity as a soulbound NFT with on-chain metadata.";
   let image = null;
 
   try {

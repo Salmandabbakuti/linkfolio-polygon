@@ -1,20 +1,14 @@
 {
-  "name": "linkfolio-nero-subgraph",
+  "name": "linkfolio-subgraph",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ linkfolio-nero",
-    "create-local": "graph create --node http://localhost:8020/ linkfolio-nero",
-    "remove-local": "graph remove --node http://localhost:8020/ linkfolio-nero",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 linkfolio-nero",
-    "create-remote": "graph create --node http://subgraph.mainnet.nero.metaborong.com:8020 linkfolio-nero",
-    "remove-remote": "graph remove --node http://subgraph.mainnet.nero.metaborong.com:8020 linkfolio-nero",
-    "deploy-remote": "graph deploy --node http://subgraph.mainnet.nero.metaborong.com:8020 --ipfs https://ipfs.network.thegraph.com linkfolio-nero --version-label 0.4.1",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ linkfolio",
     "test": "graph test"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.97.1",
-    "@graphprotocol/graph-ts": "0.38.1"
+    "@graphprotocol/graph-cli": "0.98.1",
+    "@graphprotocol/graph-ts": "0.38.2"
   }
 }

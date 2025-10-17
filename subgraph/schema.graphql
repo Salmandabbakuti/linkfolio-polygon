@@ -1,8 +1,7 @@
 type User @entity(immutable: true) {
   id: ID!
   address: String!
-  scw: Bytes! # respective smart contract wallet address for the user
-  profiles: [Profile!]! @derivedFrom(field: "eoa")
+  profiles: [Profile!]! @derivedFrom(field: "owner")
   createdAt: BigInt!
 }
 
@@ -17,8 +16,7 @@ type Profile @entity(immutable: false) {
   linkKeys: [String!]!
   links: [String!]!
   settingsHash: String! # hash of the appearance settings
-  owner: Bytes! # The address that created the profile
-  eoa: User! # The user that owns the profile
+  owner: User! # The address that created the profile
   tipAmount: BigInt! # total amount of tips received by the profile
   posts: [Post!]! @derivedFrom(field: "author")
   notes: [Note!]! @derivedFrom(field: "to")

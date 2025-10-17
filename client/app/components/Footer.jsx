@@ -18,7 +18,7 @@ export default function Footer() {
   const socialLinks = [
     {
       icon: <GithubOutlined />,
-      href: "https://github.com/Salmandabbakuti/linkfolio-nero",
+      href: "https://github.com/Salmandabbakuti/linkfolio",
       label: "GitHub"
     },
     {
@@ -71,8 +71,7 @@ export default function Footer() {
               </Title>
               <Paragraph className={styles.footerTagline}>
                 Create and own your digital identity as a soulbound NFT with
-                on-chain metadata. Built on NERO Chain with gas-free
-                transactions via Account Abstraction.
+                on-chain metadata. Built on Polygon.
               </Paragraph>
 
               {/* Social links */}
@@ -145,7 +144,7 @@ export default function Footer() {
                   }}
                 >
                   {[
-                    { name: "NERO Chain", color: "#6366f1" },
+                    { name: "Polygon", color: "#6366f1" },
                     { name: "TheGraph", color: "#10b981" },
                     { name: "Next.js", color: "#fdfdfd" },
                     { name: "AppKit", color: "#ec4899" },
@@ -255,7 +254,7 @@ export default function Footer() {
                   fontWeight: "var(--font-weight-medium)"
                 }}
               >
-                v0.5.1 • All systems operational
+                v0.6.0 • All systems operational
               </Text>
             </div>
           </Col>

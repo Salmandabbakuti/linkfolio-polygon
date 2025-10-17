@@ -15,14 +15,12 @@ export function handleProfileCreated(event: ProfileCreatedEvent): void {
   const blockTimestamp = event.block.timestamp;
   const tokenId = event.params.tokenId;
   const owner = event.params.owner;
-  const eoa = event.params.eoa;
   const handle = event.params.handle;
-  // Create user if not exists with eoa as id
-  let user = User.load(eoa.toHex());
+  // Create user if not exists with owner as id
+  let user = User.load(owner.toHex());
   if (user == null) {
-    user = new User(eoa.toHex());
-    user.address = eoa.toHex();
-    user.scw = owner; // smart account address
+    user = new User(owner.toHex());
+    user.address = owner.toHex();
     user.createdAt = blockTimestamp;
     user.save();
   }
@@ -35,8 +33,7 @@ export function handleProfileCreated(event: ProfileCreatedEvent): void {
   profile.category = ProfileCategories[event.params.category];
   profile.bio = event.params.bio;
   profile.avatar = event.params.avatar;
-  profile.owner = owner;
-  profile.eoa = eoa.toHex();
+  profile.owner = owner.toHex();
   profile.tipAmount = ZERO_BI; // Initialize tip amount to zero
   profile.linkKeys = event.params.linkKeys;
   profile.links = event.params.links;
@@ -56,8 +53,7 @@ export function handleProfileUpdated(event: ProfileUpdatedEvent): void {
     profile = new Profile(handle);
     profile.tokenId = event.params.tokenId;
     profile.handle = handle;
-    profile.owner = event.params.owner;
-    profile.eoa = event.params.owner.toHex(); // FIXME: Using owner as EOA fallback. on update event, we won't have access to eoa, so we use owner
+    profile.owner = event.params.owner.toHex();
     profile.tipAmount = ZERO_BI; // Initialize tip amount to zero
     profile.createdAt = event.block.timestamp;
   }

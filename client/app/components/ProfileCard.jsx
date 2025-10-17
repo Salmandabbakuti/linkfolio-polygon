@@ -34,18 +34,13 @@ import {
   ellipsisString,
   linkFolioContract
 } from "@/app/utils";
-import { executeOperation } from "@/app/utils/aaUtils";
 import { EXPLORER_URL } from "@/app/utils/constants";
 
 dayjs.extend(relativeTime);
 
 const { Paragraph } = Typography;
 
-export default function ProfileCard({
-  profile,
-  aaWalletAddress,
-  appearanceSettings = {}
-}) {
+export default function ProfileCard({ profile, appearanceSettings = {} }) {
   const [postInput, setPostInput] = useState("");
   const [noteInput, setNoteInput] = useState("");
   const [tipAmount, setTipAmount] = useState("");
@@ -54,14 +49,16 @@ export default function ProfileCard({
     leaveNote: false
   });
 
-  // Suggested tip amounts in NERO
+  // Suggested tip amounts in POL
   const suggestedTips = [
     { label: "No tip", value: "0" },
-    { label: "0.5 NERO", value: "0.5" },
-    { label: "1 NERO", value: "1" },
-    { label: "5 NERO", value: "5" },
-    { label: "25 NERO", value: "25" },
-    { label: "50 NERO", value: "50" }
+    { label: "1 POL", value: "1" },
+    { label: "10 POL", value: "10" },
+    { label: "25 POL", value: "25" },
+    { label: "50 POL", value: "50" },
+    { label: "75 POL", value: "75" },
+    { label: "100 POL", value: "100" },
+    { label: "200 POL", value: "200" }
   ];
 
   const { address: account } = useAppKitAccount();
@@ -72,20 +69,15 @@ export default function ProfileCard({
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "links";
 
-  const isProfileOwner = useMemo(
-    () =>
-      aaWalletAddress &&
-      profile?.owner?.toLowerCase() === aaWalletAddress?.toLowerCase(),
-    [aaWalletAddress, profile]
-  );
+  const isProfileOwner = profile?.owner?.id === account?.toLowerCase();
 
   const handleLeaveNote = async () => {
     // check if note input is between 1 and 280 characters
     if (noteInput.length < 1 || noteInput.length > 280)
       return message.error("Note must be between 1 and 280 characters");
     if (!account) return message.error("Please connect your wallet first");
-    if (selectedNetworkId !== "eip155:1689")
-      return message.error("Please switch to NERO Mainnet");
+    if (selectedNetworkId !== "eip155:80002")
+      return message.error("Please switch to Polygon Amoy network");
 
     // Validate tip amount
     const finalTipAmount = tipAmount || "0";
@@ -111,7 +103,7 @@ export default function ProfileCard({
       message.success(
         `Note left successfully!${
           parseFloat(finalTipAmount) > 0
-            ? ` Thank you for tipping ${finalTipAmount} NERO!`
+            ? ` Thank you for tipping ${finalTipAmount} POL!`
             : ""
         }`
       );
@@ -141,24 +133,22 @@ export default function ProfileCard({
     if (postInput.length < 1 || postInput.length > 1000)
       return message.error("Post must be between 1 and 1000 characters");
     if (!account) return message.error("Please connect your wallet first");
-    if (selectedNetworkId !== "eip155:1689")
-      return message.error("Please switch to NERO Mainnet");
+    if (selectedNetworkId !== "eip155:80002")
+      return message.error("Please switch to Polygon Amoy network");
     setLoading((prev) => ({ ...prev, createPost: true }));
     try {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
-      const createPostOpTx = await executeOperation(
-        signer,
-        linkFolioContract.target,
-        "createPost",
-        [profile?.id, postInput]
-      );
-      console.log("Create post operation transaction:", createPostOpTx);
+      const createPostTx = await linkFolioContract
+        .connect(signer)
+        .createPost(profile?.id, postInput);
+      console.log("Create post operation transaction:", createPostTx);
+      await createPostTx.wait();
       message.success("Post created successfully!");
       // add the new post to the profile posts
       profile.posts = [
         {
-          id: createPostOpTx,
+          id: createPostTx,
           author: {
             id: profile?.id,
             handle: profile?.handle,
@@ -257,7 +247,6 @@ export default function ProfileCard({
           ? "50px"
           : "0px",
       backgroundColor: accentColor,
-      color: textColor,
       borderColor: accentColor,
       fontFamily,
       fontSize: `${fontSize}px`
@@ -416,23 +405,23 @@ export default function ProfileCard({
             bordered={false}
             style={{ ...dynamicStyles.tag, marginLeft: "8px" }}
           >
-            {formatEther(profile?.tipAmount || 0n)} NERO
+            {formatEther(profile?.tipAmount || 0n)} POL
           </Tag>
           <Tag
             bordered={false}
             style={{ ...dynamicStyles.tag, marginLeft: "8px" }}
           >
             <span
-              title="Copy EOA address"
+              title="Copy address"
               onClick={() => {
                 navigator.clipboard.writeText(
-                  profile?.eoa?.id || account || ""
+                  profile?.owner?.id || account || ""
                 );
-                message.success("EOA address copied to clipboard!");
+                message.success("Address copied to clipboard!");
               }}
               style={{ cursor: "pointer" }}
             >
-              {ellipsisString(profile?.eoa?.id || account || "", 8, 5)}{" "}
+              {ellipsisString(profile?.owner?.id || account || "", 8, 5)}{" "}
               <CopyOutlined style={{ marginLeft: "4px" }} />
             </span>
           </Tag>
@@ -616,7 +605,7 @@ export default function ProfileCard({
                     style={dynamicStyles.button}
                   >
                     {tipAmount && parseFloat(tipAmount) > 0
-                      ? `Submit with ${tipAmount} NERO tip`
+                      ? `Submit with ${tipAmount} POL tip`
                       : "Submit"}
                   </Button>
                   <Divider />
@@ -679,7 +668,7 @@ export default function ProfileCard({
                                       icon={<DollarOutlined />}
                                       style={dynamicStyles.tag}
                                     >
-                                      {formatEther(item?.tipAmount)} NERO
+                                      {formatEther(item?.tipAmount)} POL
                                     </Tag>
                                     <a
                                       href={`${EXPLORER_URL}/tx/${item?.txHash}`}

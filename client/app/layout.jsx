@@ -20,7 +20,7 @@ export const metadata = {
     absolute: "LinkFolio"
   },
   description:
-    "Create and own your digital identity as a soulbound NFT with on-chain metadata, gas-free via NERO Chain’s Paymaster and account abstraction.",
+    "Create and own your digital identity as a soulbound NFT with on-chain metadata.",
   keywords: "LinkFolio, profiles, social media, blockchain, portfolio"
 };
 

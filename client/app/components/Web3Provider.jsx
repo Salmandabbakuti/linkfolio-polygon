@@ -3,20 +3,20 @@ import { useState, useEffect } from "react";
 import "@ant-design/v5-patch-for-react-19";
 import { ConfigProvider, theme } from "antd";
 import { createAppKit } from "@reown/appkit/react";
+import { polygonAmoy, polygon, mainnet } from "@reown/appkit/networks";
 import { EthersAdapter } from "@reown/appkit-adapter-ethers";
-import { neroTestnetChain, neroMainnetChain } from "@/app/utils";
 
 // 1. Get projectId at https://cloud.reown.com
 const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID;
-const networks = [neroMainnetChain, neroTestnetChain];
+const networks = [polygonAmoy, polygon, mainnet];
 
 // 2. Create a metadata object
 const metadata = {
   name: "LinkFolio",
   description:
     "LinkFolio turns personal profiles into NFTs. Own your soulbound digital identity effortlessly fully onchain",
-  url: "https://linkfolio-nero.vercel.app", // origin must match your domain & subdomain
-  icons: ["https://linkfolio-nero.vercel.app/favicon.ico"]
+  url: "https://linkfolio-rho.vercel.app", // origin must match your domain & subdomain
+  icons: ["https://linkfolio-rho.vercel.app/favicon.ico"]
 };
 
 // 3. Create the AppKit instance
@@ -25,12 +25,8 @@ createAppKit({
   metadata,
   networks,
   projectId,
-  defaultNetwork: neroMainnetChain, // Default network to use
+  defaultNetwork: polygonAmoy, // Default network to use
   allowUnsupportedChain: false,
-  chainImages: {
-    689: "https://testnet.neroscan.io/favicon.svg",
-    1689: "https://framerusercontent.com/images/45NncLY0V1ELrMis3GvSCJsN79s.png"
-  },
   themeMode: "dark",
   themeVariables: {
     "--w3m-accent": "#6366f1" // Primary indigo color
@@ -41,12 +37,12 @@ createAppKit({
     onramp: false,
     // socials: false, // should be false or provider only
     email: true,
-    connectMethodsOrder: ["social", "email", "wallet"],
+    connectMethodsOrder: ["wallet", "social", "email"],
     emailShowWallets: true,
-    legalCheckbox: true
-  },
-  termsConditionsUrl: "https://linkfolio-nero.vercel.app#terms",
-  privacyPolicyUrl: "https://linkfolio-nero.vercel.app#privacy"
+    legalCheckbox: true,
+    termsConditionsUrl: "https://example.com/terms",
+    privacyPolicyUrl: "https://example.com/privacy"
+  }
 });
 
 export default function Web3Provider({ children }) {

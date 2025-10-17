@@ -23,8 +23,7 @@ contract LinkFolio is ERC721 {
         ProfileCategory category;
         string bio;
         string avatar;
-        address owner; // owner can be smart-account creating the profile
-        address eoa; // actual address that owns the profile nft and can update/delete the profile
+        address owner;
         string settingsHash; // ipfs hash of the profile appearance settings json
         string[] linkKeys;
         mapping(string => string) links;
@@ -63,7 +62,6 @@ contract LinkFolio is ERC721 {
         string bio,
         string avatar,
         address owner,
-        address eoa,
         string[] linkKeys,
         string[] links,
         string settingsHash
@@ -104,15 +102,11 @@ contract LinkFolio is ERC721 {
     constructor() ERC721("LinkFolio", "LIFO") {}
 
     modifier onlyProfileOwner(uint256 _tokenId) {
+        address profileOwner = _ownerOf(_tokenId);
+        require(profileOwner != address(0), "LinkFolio: Profile doesnot exist");
         require(
-            _ownerOf(_tokenId) != address(0),
-            "LinkFolio: Token doesnot exist"
-        );
-        // profile owner or eoa can update/delete the profile
-        require(
-            _ownerOf(_tokenId) == msg.sender ||
-                profiles[_tokenId].owner == msg.sender,
-            "LinkFolio: only profile owner/eoa can perform this action"
+            profileOwner == msg.sender,
+            "LinkFolio: only profile owner can perform this action"
         );
         _;
     }
@@ -125,7 +119,6 @@ contract LinkFolio is ERC721 {
         string memory _avatar,
         string[] memory _linkKeys,
         string[] memory _links,
-        address _eoa,
         string memory _settingsHash
     ) external {
         require(
@@ -151,13 +144,12 @@ contract LinkFolio is ERC721 {
         newProfile.avatar = _avatar;
         newProfile.linkKeys = _linkKeys;
         newProfile.owner = msg.sender;
-        newProfile.eoa = _eoa;
         newProfile.settingsHash = _settingsHash;
 
         for (uint256 i = 0; i < _linkKeys.length; i++) {
             newProfile.links[_linkKeys[i]] = _links[i];
         }
-        _safeMint(_eoa, currentTokenId);
+        _safeMint(msg.sender, currentTokenId);
         emit ProfileCreated(
             currentTokenId,
             _name,
@@ -166,7 +158,6 @@ contract LinkFolio is ERC721 {
             _bio,
             _avatar,
             msg.sender,
-            _eoa,
             _linkKeys,
             _links,
             _settingsHash

@@ -1,4 +1,6 @@
-specVersion: 1.0.0
+specVersion: 1.3.0
+description: LinkFolio Subgraph
+repository: https://github.com/Salmandabbakuti/linkfolio
 indexerHints:
   prune: auto
 schema:
@@ -6,14 +8,14 @@ schema:
 dataSources:
   - kind: ethereum
     name: LinkFolio
-    network: nero-evm-mainnet
+    network: polygon-amoy
     source:
-      address: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4"
+      address: "0xfaF07923E3Ed82A432C7F7b2B6A976D0d38817fE"
       abi: LinkFolio
-      startBlock: 6488434
+      startBlock: 27806023
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.9
       language: wasm/assemblyscript
       entities:
         - Profile
@@ -24,7 +26,7 @@ dataSources:
         - name: LinkFolio
           file: ./abis/LinkFolio.json
       eventHandlers:
-        - event: ProfileCreated(indexed uint256,string,string,uint8,string,string,address,address,string[],string[],string)
+        - event: ProfileCreated(indexed uint256,string,string,uint8,string,string,address,string[],string[],string)
           handler: handleProfileCreated
         - event: ProfileDeleted(indexed uint256,string)
           handler: handleProfileDeleted
