@@ -49,7 +49,7 @@ npx hardhat ignition deploy ./ignition/modules/LinkFolio.ts --network polygonAmo
 
 - Migrate from NERO Chain to Polygon for enhanced scalability and performance.
 - Updated contract, subgraph, and client application to support Polygon.
-- Removed NERO Chain specific features(Paymaster, UserOp calls) and dependencies.
+- Removed NERO Chain-specific features (Paymaster, UserOp calls) and dependencies.
 
 #### 0.5.0
 

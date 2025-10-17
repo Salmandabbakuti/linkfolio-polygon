@@ -148,7 +148,7 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
       // add the new post to the profile posts
       profile.posts = [
         {
-          id: createPostTx,
+          id: createPostTx?.hash,
           author: {
             id: profile?.id,
             handle: profile?.handle,

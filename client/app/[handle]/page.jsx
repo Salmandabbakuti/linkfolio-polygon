@@ -6,7 +6,7 @@ export async function generateMetadata({ params }) {
   const { handle } = await params;
 
   //  base metadata for the profile page
-  const url = `https://linkfolio-rho.vercel.app/${handle}`;
+  const url = `https://linkfol-io.vercel.app/${handle}`;
   const siteName = "LinkFolio";
   let title = handle;
   let description =

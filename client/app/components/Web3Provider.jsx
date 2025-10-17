@@ -15,8 +15,8 @@ const metadata = {
   name: "LinkFolio",
   description:
     "LinkFolio turns personal profiles into NFTs. Own your soulbound digital identity effortlessly fully onchain",
-  url: "https://linkfolio-rho.vercel.app", // origin must match your domain & subdomain
-  icons: ["https://linkfolio-rho.vercel.app/favicon.ico"]
+  url: "https://linkfol-io.vercel.app", // origin must match your domain & subdomain
+  icons: ["https://linkfol-io.vercel.app/favicon.ico"]
 };
 
 // 3. Create the AppKit instance
@@ -40,8 +40,8 @@ createAppKit({
     connectMethodsOrder: ["wallet", "social", "email"],
     emailShowWallets: true,
     legalCheckbox: true,
-    termsConditionsUrl: "https://example.com/terms",
-    privacyPolicyUrl: "https://example.com/privacy"
+    termsConditionsUrl: "https://linkfol-io.vercel.app#terms",
+    privacyPolicyUrl: "https://linkfol-io.vercel.app#privacy"
   }
 });
 

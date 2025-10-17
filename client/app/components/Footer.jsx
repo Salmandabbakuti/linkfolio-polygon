@@ -2,7 +2,7 @@
 import { Row, Col, Typography, Space, Divider } from "antd";
 import {
   GithubOutlined,
-  TwitterOutlined,
+  XOutlined,
   LinkedinOutlined,
   RocketOutlined,
   CrownOutlined
@@ -18,13 +18,13 @@ export default function Footer() {
   const socialLinks = [
     {
       icon: <GithubOutlined />,
-      href: "https://github.com/Salmandabbakuti/linkfolio",
+      href: "https://github.com/Salmandabbakuti/linkfolio-polygon",
       label: "GitHub"
     },
     {
-      icon: <TwitterOutlined />,
-      href: "https://twitter.com/linkfolio",
-      label: "Twitter"
+      icon: <XOutlined />,
+      href: "https://x.com/linkfolio",
+      label: "X"
     },
     {
       icon: <LinkedinOutlined />,
