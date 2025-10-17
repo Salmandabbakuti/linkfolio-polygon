@@ -11,8 +11,8 @@
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
-    "@reown/appkit": "1.7.15",
-    "@reown/appkit-adapter-ethers": "1.7.15",
+    "@reown/appkit": "1.8.10",
+    "@reown/appkit-adapter-ethers": "1.8.10",
     "antd": "^5.27.5",
     "dayjs": "^1.11.18",
     "ethers": "^6.15.0",
