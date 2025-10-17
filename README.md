@@ -34,6 +34,35 @@ npx hardhat compile
 npx hardhat ignition deploy ./ignition/modules/LinkFolio.ts --network polygonAmoy
 ```
 
+### 2. Deploying Subgraph
+
+> Create a new subgraph on [The Graph](https://thegraph.com/) and update the `subgraph.yaml` file inside the `subgraph` folder with your subgraph slug, chain, contract address and block number if needed.
+
+```bash
+
+cd subgraph
+
+npm install
+
+npm run codegen
+
+npm run deploy
+```
+
+### 3. Running the Client
+
+> Copy the `.env.example` file to `.env` and update the environment variables with your own values.
+
+```bash
+cd client
+
+npm install
+
+npm run dev
+```
+
+Open http://localhost:3000 with your browser to see the result.
+
 ### Demo
 
 ![lfv04-appearance-settings-sc](https://github.com/user-attachments/assets/32108429-f3b1-445e-822e-350e37f46ea9)
@@ -113,9 +142,7 @@ npx hardhat ignition deploy ./ignition/modules/LinkFolio.ts --network polygonAmo
 
 ## Built With
 
-- [NERO Chain](https://nerochain.io/) - Fully Modular Blockchain Architecture for Enhanced Adaptation and Performance
-- [NERO Chain Platform Paymaster](https://nerochain.io/paymaster) - Allows seamless gas sponsorships, gas fee payments using any token or stablecoin of your choice
-- [NERO Chain AA sdk](https://docs.nerochain.io/en/developer-tools/user-op-sdk) - Native account abstraction support for enhanced security and privacy by Nerochain
+- [Polygon Pos](https://polygon.technology/) - Ethereum-compatible blockchain platform for scalable and secure decentralized applications
 - [Hardhat](https://hardhat.org/) - Ethereum development environment for professionals
 - [Reown Appkit](https://reown.com/appkit) - The full stack toolkit to build onchain app UX.
 - [Ethers.js](https://docs.ethers.io/v5/) - A complete and compact library for interacting with the Ethereum Blockchain and its ecosystem.
