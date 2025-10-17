@@ -59,34 +59,20 @@
   --z-tooltip: 1070;
   --z-toast: 1080;
 
-  /* Light theme */
-  --foreground-rgb: 15, 23, 42;
-  --background-start-rgb: 248, 250, 252;
-  --background-end-rgb: 255, 255, 255;
-  --text-primary: rgba(15, 23, 42, 1);
-  --text-secondary: rgba(71, 85, 105, 1);
+  /* Forced Dark theme */
+  --foreground-rgb: 248, 250, 252;
+  --background-start-rgb: 15, 23, 42;
+  --background-end-rgb: 30, 41, 59;
+  --text-primary: rgba(248, 250, 252, 1);
+  --text-secondary: rgba(203, 213, 225, 1);
   --text-muted: rgba(148, 163, 184, 1);
-  --surface: rgba(255, 255, 255, 1);
-  --surface-secondary: rgba(248, 250, 252, 1);
-  --border-color: rgba(226, 232, 240, 1);
-}
+  --surface: rgba(30, 41, 59, 1);
+  --surface-secondary: rgba(51, 65, 85, 1);
+  --border-color: rgba(71, 85, 105, 1);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 248, 250, 252;
-    --background-start-rgb: 15, 23, 42;
-    --background-end-rgb: 30, 41, 59;
-    --text-primary: rgba(248, 250, 252, 1);
-    --text-secondary: rgba(203, 213, 225, 1);
-    --text-muted: rgba(148, 163, 184, 1);
-    --surface: rgba(30, 41, 59, 1);
-    --surface-secondary: rgba(51, 65, 85, 1);
-    --border-color: rgba(71, 85, 105, 1);
-
-    --bg-pattern-dots: radial-gradient(circle at 2px 2px, rgba(139, 92, 246, 0.15) 1px, transparent 0);
-    --bg-pattern-grid: linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
-  }
+  --bg-pattern-dots: radial-gradient(circle at 2px 2px, rgba(139, 92, 246, 0.15) 1px, transparent 0);
+  --bg-pattern-grid: linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
 }
 
 * {
@@ -237,12 +223,14 @@ body::after {
   }
 }
 
-/* Ant Design customizations */
+/* Ant Design customizations - forced dark theme */
 .ant-layout {
   background: transparent !important;
 }
 
 .ant-card {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
   box-shadow: var(--shadow-lg) !important;
   border-radius: var(--border-radius) !important;
   transition: all var(--transition-normal) !important;
@@ -285,21 +273,12 @@ body::after {
   }
 }
 
-/* Dark mode adjustments */
-@media (prefers-color-scheme: dark) {
-  .ant-card {
-    background: rgba(30, 41, 59, 0.8) !important;
-    border: 1px solid rgba(71, 85, 105, 0.3) !important;
-  }
-}
-
 a {
   color: inherit;
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Force dark color scheme */
+html {
+  color-scheme: dark;
 }
