@@ -19,7 +19,6 @@ import {
   LinkOutlined,
   ShareAltOutlined,
   CrownOutlined,
-  ThunderboltOutlined,
   SafetyOutlined,
   GlobalOutlined,
   DollarOutlined,
@@ -105,17 +104,6 @@ const features = [
     title: "Soulbound NFT Profiles",
     description:
       "Each profile is minted as a unique, non-transferrable NFT ensuring true ownership and authenticity.",
-    highlight: true
-  },
-  {
-    icon: (
-      <ThunderboltOutlined
-        style={{ fontSize: "32px", color: "var(--warning-color)" }}
-      />
-    ),
-    title: "Gas-Free Transactions",
-    description:
-      "Enjoy seamless interactions with zero gas fees powered by NERO Chain's Account Abstraction technology.",
     highlight: true
   },
   {

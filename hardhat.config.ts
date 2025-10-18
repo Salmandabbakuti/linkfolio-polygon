@@ -16,12 +16,12 @@ const config: HardhatUserConfig = {
     }
   },
   networks: {
-    neroTestnet: {
-      url: "https://rpc-testnet.nerochain.io",
+    polygonAmoy: {
+      url: "https://rpc-amoy.polygon.technology/",
       accounts
     },
-    neroMainnet: {
-      url: "https://rpc.nerochain.io",
+    polygon: {
+      url: "https://polygon-rpc.com/",
       accounts
     }
   }

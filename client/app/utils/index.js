@@ -1,5 +1,4 @@
 import { Contract, JsonRpcProvider } from "ethers";
-import { defineChain } from "@reown/appkit/networks";
 import { GraphQLClient, gql } from "graphql-request";
 import {
   XOutlined,
@@ -43,61 +42,22 @@ export const DEFAULT_APPEARANCE_SETTINGS = {
   banner: ""
 };
 
-// Define the Nero Testnet chain
-export const neroTestnetChain = defineChain({
-  id: 689,
-  caipNetworkId: "eip155:689",
-  chainNamespace: "eip155",
-  name: "Nero Testnet",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Nero",
-    symbol: "NERO"
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc-testnet.nerochain.io"],
-      webSocket: ["wss://rpc-testnet.nerochain.io"]
-    }
-  },
-  blockExplorers: {
-    default: { name: "Explorer", url: "https://testnet.neroscan.io" }
+// polygon amoy provider
+const defaultProvider = new JsonRpcProvider(
+  "https://rpc-amoy.polygon.technology",
+  80002,
+  {
+    staticNetwork: true
   }
-});
-
-export const neroMainnetChain = defineChain({
-  id: 1689,
-  caipNetworkId: "eip155:1689",
-  chainNamespace: "eip155",
-  name: "Nero Mainnet",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Nero",
-    symbol: "NERO"
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc.nerochain.io"],
-      webSocket: ["wss://rpc.nerochain.io"]
-    }
-  },
-  blockExplorers: {
-    default: { name: "Explorer", url: "https://neroscan.io" }
-  }
-});
-
-// nero mainnet provider
-const defaultProvider = new JsonRpcProvider("https://rpc.nerochain.io", 1689, {
-  staticNetwork: true
-});
+);
 
 const linkFolioContractABI = [
-  "function createProfile(string _name, string _handle, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links, address _eoa, string _settingsHash)",
+  "function createProfile(string _name, string _handle, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links, string _settingsHash)",
   "function updateProfile(uint256 _tokenId, string _name, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links, string _settingsHash)",
   "function deleteProfile(uint256 _tokenId)",
   "function leaveNote(string _handle, string _content) payable",
   "function createPost(uint256 _tokenId, string _content)",
-  "function profiles(uint256 tokenId) view returns (uint256 tokenId, string name, string handle, uint8 category, string bio, string avatar, address owner, address _eoa)",
+  "function profiles(uint256 tokenId) view returns (uint256 tokenId, string name, string handle, uint8 category, string bio, string avatar, address owner)",
   "function handleToTokenId(string handle) view returns (uint256 tokenId)",
   "function tokenURI(uint256 tokenId) view returns (string uri)"
 ];
@@ -110,7 +70,7 @@ export const linkFolioContract = new Contract(
 
 const subgraphUrl =
   process.env.NEXT_PUBLIC_SUBGRAPH_API_URL ||
-  "https://subgraph.mainnet.nero.metaborong.com/subgraphs/name/linkfolio-nero";
+  "https://api.studio.thegraph.com/query/15343/linkfolio/version/latest";
 
 export const subgraphClient = new GraphQLClient(subgraphUrl);
 
@@ -136,7 +96,7 @@ export const GET_PROFILES_QUERY = gql`
       category
       bio
       avatar
-      eoa {
+      owner {
         id
       }
       tipAmount
@@ -167,10 +127,9 @@ export const GET_PROFILE_QUERY = gql`
       category
       bio
       avatar
-      eoa {
+      owner {
         id
       }
-      owner
       tipAmount
       linkKeys
       links

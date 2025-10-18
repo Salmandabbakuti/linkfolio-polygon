@@ -2,14 +2,10 @@
 
 LinkFolio is a platform enabling users to craft personalized digital profiles transformed into non-fungible tokens (NFTs). Seamlessly curate your profile with a bio, avatar, and custom links to social media, portfolios, and more. With LinkFolio, your digital identity becomes a unique NFT asset, offering ownership and authenticity. Whether you're a creator, influencer, or professional, LinkFolio provides a streamlined solution to manage your digital presence as valuable NFTs.
 
-Built on NERO Chain, LinkFolio leverages native Account Abstraction (AA) and Paymaster infrastructure to deliver a gasless, seamless onboarding experience. Users can claim and update their profiles without ever needing to hold or manage gas tokens, eliminating a major barrier to Web3 adoption.
-
 Craft your unique bio, avatar, and links to social media as properties and attributes of your nft. Own your soulbound digital identity effortlessly fully onchain. Think of it as web3 version of linktree profile as digital collectible.
 
 ### Features
 
-- **Gasless Experience:** Powered by NERO Chain Paymaster, users can interact without paying gas fees using ETH or stablecoins.
-- **Native Account Abstraction:** Streamlines wallet interactions and enhances user experience through smart contract-based wallets.
 - **Soulbound NFT Profiles:** Each profile is minted as a unique, non-transferrable NFT ensuring true ownership and authenticity.
 - **On-Chain Metadata:** All profile data is stored directly on-chain, ensuring permanence, integrity, and decentralization.
 - **Posts/Updates:** Share updates or announcements with your community through posts, enhancing engagement.
@@ -19,7 +15,7 @@ Craft your unique bio, avatar, and links to social media as properties and attri
 
 ![lfv04-appearance-settings-form-sc](https://github.com/user-attachments/assets/322e5940-ab27-4deb-ac13-49b3da1526e4)
 
-**Contract Address:** [0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4](https://neroscan.io/address/0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4?tab=Transactions). Deployed on Nerochain Mainnet.
+**Contract Address:** [0xfaF07923E3Ed82A432C7F7b2B6A976D0d38817fE](https://amoy.polygonscan.com/address/0xfaF07923E3Ed82A432C7F7b2B6A976D0d38817fE). Deployed on Polygon Amoy.
 
 ## Getting Started
 
@@ -35,12 +31,12 @@ npm install
 
 npx hardhat compile
 
-npx hardhat ignition deploy ./ignition/modules/LinkFolio.ts --network neroMainnet
+npx hardhat ignition deploy ./ignition/modules/LinkFolio.ts --network polygonAmoy
 ```
 
 ### 2. Deploying Subgraph
 
-> Subgraph will be deployed to NERO Chain's hosted Sandbox environment. Please refer to the [Graph Node documentation](https://thegraph.com/docs/en/indexing/tooling/graph-node/) for more information on how to set up your environment. Update `package.json` scripts to point to your local Graph Node if you are running one.
+> Create a new subgraph on [The Graph](https://thegraph.com/) and update the `subgraph.yaml` file inside the `subgraph` folder with your subgraph slug, chain, contract address and block number if needed.
 
 ```bash
 
@@ -50,9 +46,7 @@ npm install
 
 npm run codegen
 
-npm run create-remote # create a new subgraph on the sandbox environment
-
-npm run deploy-remote # deploy the subgraph to the sandbox environment
+npm run deploy
 ```
 
 ### 3. Running the Client
@@ -69,13 +63,6 @@ npm run dev
 
 Open http://localhost:3000 with your browser to see the result.
 
-### Paymaster and AA Integration
-
-The core implemtation of Paymaster and Account Abstraction(AA) can be found in [`client/app/utils/aaUtils.js`](client/app/utils/aaUtils.js)
-
-Interaction flow is demonstrated in [Creation, Update, Delete of Profiles](client/app/[handle]/page.client.jsx#L181) and in [Creation of posts and notes](client/app/components/ProfileCard.jsx#L62),
-where the user is prompted to sign a message to create a profile, post or note. The Paymaster handles the gasless transaction and the AA SDK manages the smart contract wallet interactions.
-
 ### Demo
 
 ![lfv04-appearance-settings-sc](https://github.com/user-attachments/assets/32108429-f3b1-445e-822e-350e37f46ea9)
@@ -86,6 +73,12 @@ where the user is prompted to sign a message to create a profile, post or note. 
 ![lfv04-explore-sc](https://github.com/user-attachments/assets/160aa900-c888-4723-b330-c1f922cff4d4)
 
 ### ChangeLog
+
+#### 0.6.0
+
+- Migrate from NERO Chain to Polygon for enhanced scalability and performance.
+- Updated contract, subgraph, and client application to support Polygon.
+- Removed NERO Chain-specific features (Paymaster, UserOp calls) and dependencies.
 
 #### 0.5.0
 
@@ -149,9 +142,7 @@ where the user is prompted to sign a message to create a profile, post or note. 
 
 ## Built With
 
-- [NERO Chain](https://nerochain.io/) - Fully Modular Blockchain Architecture for Enhanced Adaptation and Performance
-- [NERO Chain Platform Paymaster](https://nerochain.io/paymaster) - Allows seamless gas sponsorships, gas fee payments using any token or stablecoin of your choice
-- [NERO Chain AA sdk](https://docs.nerochain.io/en/developer-tools/user-op-sdk) - Native account abstraction support for enhanced security and privacy by Nerochain
+- [Polygon Pos](https://polygon.technology/) - Ethereum-compatible blockchain platform for scalable and secure decentralized applications
 - [Hardhat](https://hardhat.org/) - Ethereum development environment for professionals
 - [Reown Appkit](https://reown.com/appkit) - The full stack toolkit to build onchain app UX.
 - [Ethers.js](https://docs.ethers.io/v5/) - A complete and compact library for interacting with the Ethereum Blockchain and its ecosystem.

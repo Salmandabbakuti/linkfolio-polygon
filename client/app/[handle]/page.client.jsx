@@ -60,7 +60,6 @@ import {
   LINKFOLIO_CONTRACT_ADDRESS,
   PINATA_GATEWAY_URL
 } from "@/app/utils/constants";
-import { executeOperation, getAAWalletAddress } from "@/app/utils/aaUtils";
 import {
   uploadProfileSettingsToIpfs,
   uploadFileToIpfs,
@@ -132,17 +131,11 @@ export default function Profile({ params }) {
   const searchParams = useSearchParams();
   const modeParam = searchParams.get("mode");
 
-  const isProfileOwner = useMemo(
-    () =>
-      aaWalletAddress &&
-      profile?.owner?.toLowerCase() === aaWalletAddress?.toLowerCase(),
-    [aaWalletAddress, profile]
-  );
+  const isProfileOwner = profile?.owner?.id === account?.toLowerCase();
 
   // Effects
   useEffect(() => {
     fetchProfile();
-    resolveAAWalletAddress();
   }, [account]);
 
   // On edit mode, preselect socials with existing links
@@ -189,21 +182,6 @@ export default function Profile({ params }) {
       window.removeEventListener("popstate", handlePopState);
     };
   }, [mode]);
-
-  const resolveAAWalletAddress = async () => {
-    if (!walletProvider) return;
-    try {
-      const ethersProvider = new BrowserProvider(walletProvider);
-      const signer = await ethersProvider.getSigner();
-      const aaWalletAddress = await getAAWalletAddress(signer);
-      console.log(
-        `Resolved AA Wallet Address for account ${account}: ${aaWalletAddress}`
-      );
-      setAAWalletAddress(aaWalletAddress?.toLowerCase());
-    } catch (err) {
-      console.error("Error resolving AA Wallet Address:", err);
-    }
-  };
 
   // Functions
   const fetchProfile = async () => {
@@ -263,8 +241,8 @@ export default function Profile({ params }) {
 
   const onFinish = async (dataObj) => {
     if (!account) return message.error("Please connect your wallet first");
-    if (selectedNetworkId !== "eip155:1689")
-      return message.error("Please switch to NERO Mainnet");
+    if (selectedNetworkId !== "eip155:80002")
+      return message.error("Please switch to Polygon Amoy network");
     const tokenId = profile?.id;
     setLoading({ ...loading, write: true });
     const categoryVal = categoryArr.indexOf(dataObj?.category);
@@ -319,23 +297,18 @@ export default function Profile({ params }) {
         links
       });
       if (!tokenId) {
-        const createOpTx = await executeOperation(
-          signer,
-          linkFolioContract.target,
-          "createProfile",
-          [
-            dataObj.name,
-            handle,
-            categoryVal,
-            dataObj.bio || "",
-            dataObj.avatar || "",
-            linkKeys,
-            links,
-            account,
-            dataObj.settingsHash || "" // settingsHash is optional
-          ]
+        const createTx = await linkFolioContract.connect(signer).createProfile(
+          dataObj.name,
+          handle,
+          categoryVal,
+          dataObj.bio || "",
+          dataObj.avatar || "",
+          linkKeys,
+          links,
+          dataObj.settingsHash || "" // settingsHash is optional
         );
-        console.log("Create Profile Tx:", createOpTx);
+        console.log("Create Profile Tx:", createTx);
+        await createTx.wait();
         message.success(
           "Profile created successfully. Redirecting in 5 seconds..."
         );
@@ -346,22 +319,18 @@ export default function Profile({ params }) {
         }, 5000);
         return;
       }
-      const updateOpTx = await executeOperation(
-        signer,
-        LINKFOLIO_CONTRACT_ADDRESS,
-        "updateProfile",
-        [
-          tokenId,
-          dataObj.name,
-          categoryVal,
-          dataObj.bio || "",
-          dataObj.avatar || "",
-          linkKeys,
-          links,
-          dataObj.settingsHash || "" // settingsHash is optional
-        ]
+      const updateTx = await linkFolioContract.connect(signer).updateProfile(
+        tokenId,
+        dataObj.name,
+        categoryVal,
+        dataObj.bio || "",
+        dataObj.avatar || "",
+        linkKeys,
+        links,
+        dataObj.settingsHash || "" // settingsHash is optional
       );
-      console.log("Update Profile Tx:", updateOpTx);
+      console.log("Update Profile Tx:", updateTx);
+      await updateTx.wait();
       message.success(
         "Profile updated successfully. Redirecting to view mode in 5 seconds..."
       );
@@ -385,19 +354,17 @@ export default function Profile({ params }) {
   const handleDeleteProfile = async () => {
     if (!profile?.id) return message.error("Profile not found");
     if (!account) return message.error("Please connect your wallet first");
-    if (selectedNetworkId !== "eip155:1689")
-      return message.error("Please switch to NERO Mainnet");
+    if (selectedNetworkId !== "eip155:80002")
+      return message.error("Please switch to Polygon Amoy network");
     setLoading({ ...loading, write: true });
     try {
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
-      const deleteOpTx = await executeOperation(
-        signer,
-        LINKFOLIO_CONTRACT_ADDRESS,
-        "deleteProfile",
-        [profile?.id]
-      );
-      console.log("Delete Profile Tx:", deleteOpTx);
+      const deleteTx = await linkFolioContract
+        .connect(signer)
+        .deleteProfile(profile?.id);
+      console.log("Delete Profile Tx:", deleteTx);
+      await deleteTx.wait();
       message.success("Profile deleted successfully!");
       router.push("/");
     } catch (err) {
@@ -1241,7 +1208,6 @@ export default function Profile({ params }) {
                     : profile?.avatar ||
                       `https://api.dicebear.com/5.x/open-peeps/svg?seed=${handle}`
                 }}
-                aaWalletAddress={aaWalletAddress}
                 appearanceSettings={appearanceSettings}
               />
             </Card>
@@ -1276,7 +1242,7 @@ export default function Profile({ params }) {
                       title="View on Explorer"
                       shape="circle"
                       icon={<ExportOutlined />}
-                      href={`${EXPLORER_URL}/token/${LINKFOLIO_CONTRACT_ADDRESS}?a=${profile?.id}`}
+                      href={`${EXPLORER_URL}/nft/${LINKFOLIO_CONTRACT_ADDRESS}/${profile?.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     />
@@ -1320,7 +1286,6 @@ export default function Profile({ params }) {
             ) : (
               <ProfileCard
                 profile={profile}
-                aaWalletAddress={aaWalletAddress}
                 appearanceSettings={appearanceSettings}
               />
             )}
