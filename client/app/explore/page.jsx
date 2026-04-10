@@ -172,20 +172,23 @@ export default function Explore() {
                     <Paragraph ellipsis={{ rows: 1 }} style={{ color: "#666" }}>
                       {item?.bio || "No bio available"}
                     </Paragraph>
-                    <Tag
-                      variant="outlined"
-                      color={
-                        item?.category === "Personal"
-                          ? "magenta"
-                          : item?.category === "Business"
-                            ? "blue"
-                            : item?.category === "Creator"
-                              ? "green"
-                              : "default"
-                      }
-                    >
-                      {item?.category}
-                    </Tag>
+                    <Space size="small">
+                      <Tag color="blue">#{item?.id}</Tag>
+                      <Tag
+                        variant="outlined"
+                        color={
+                          item?.category === "Personal"
+                            ? "cyan"
+                            : item?.category === "Business"
+                              ? "blue"
+                              : item?.category === "Creator"
+                                ? "green"
+                                : "default"
+                        }
+                      >
+                        {item?.category}
+                      </Tag>
+                    </Space>
                   </Card>
                 </Link>
               </Col>

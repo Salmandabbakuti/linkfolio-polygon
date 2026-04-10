@@ -9,8 +9,8 @@ import {
   Col,
   Space,
   Input,
-  message,
-  Steps
+  Steps,
+  App as AntdApp
 } from "antd";
 import {
   RocketOutlined,
@@ -198,6 +198,7 @@ export default function Home() {
   const [handle, setHandle] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { message } = AntdApp.useApp();
 
   const handleClaim = async () => {
     // handle length should be between 3 and 15 characters

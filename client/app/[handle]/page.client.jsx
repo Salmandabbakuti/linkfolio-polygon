@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo, use } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -109,7 +109,6 @@ export default function Profile({ params }) {
     read: false,
     write: false
   });
-  const [aaWalletAddress, setAAWalletAddress] = useState(null);
   const [selectedSocials, setSelectedSocials] = useState([]);
   const [appearanceSettings, setAppearanceSettings] = useState(
     initialAppearanceSettings

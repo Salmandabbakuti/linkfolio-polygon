@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   Avatar,
   Descriptions,
@@ -168,150 +168,140 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
     }
   };
   // Generate dynamic styles based on appearance settings
-  const dynamicStyles = useMemo(() => {
-    const {
-      fontFamily = "Inter, sans-serif",
-      fontSize = 16,
-      background = "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-      accentColor = "#ff9900",
-      cardStyle = "glass",
-      buttonShape = "round",
-      linkStyle = "bold",
-      textColor = "#222",
-      avatarShape = "circle",
-      banner = ""
-    } = appearanceSettings;
+  // React compiler handles memoization internally
+  const {
+    fontFamily = "Inter, sans-serif",
+    fontSize = 16,
+    background = "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+    accentColor = "#ff9900",
+    cardStyle = "glass",
+    buttonShape = "round",
+    linkStyle = "bold",
+    textColor = "#222",
+    avatarShape = "circle",
+    banner = ""
+  } = appearanceSettings;
 
-    // Helper function to convert hex to rgba
-    const hexToRgba = (hex, opacity) => {
-      if (!hex || typeof hex !== "string")
-        return `rgba(255, 153, 0, ${opacity})`;
+  // Helper function to convert hex to rgba
+  const hexToRgba = (hex, opacity) => {
+    if (!hex || typeof hex !== "string") return `rgba(255, 153, 0, ${opacity})`;
 
-      const hexValue = hex.startsWith("#") ? hex : `#${hex}`;
-      if (hexValue.length !== 7) return `rgba(255, 153, 0, ${opacity})`;
+    const hexValue = hex.startsWith("#") ? hex : `#${hex}`;
+    if (hexValue.length !== 7) return `rgba(255, 153, 0, ${opacity})`;
 
-      const r = parseInt(hexValue.slice(1, 3), 16);
-      const g = parseInt(hexValue.slice(3, 5), 16);
-      const b = parseInt(hexValue.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-    };
+    const r = parseInt(hexValue.slice(1, 3), 16);
+    const g = parseInt(hexValue.slice(3, 5), 16);
+    const b = parseInt(hexValue.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
 
-    // Base styles applied to entire component
-    const baseStyles = {
-      fontFamily,
-      fontSize: `${fontSize}px`,
-      color: textColor
-    };
+  // Base styles applied to entire component
+  const baseStyles = {
+    fontFamily,
+    fontSize: `${fontSize}px`,
+    color: textColor
+  };
 
-    const containerStyle = {
-      ...baseStyles,
-      borderRadius:
-        cardStyle === "glass"
-          ? "20px"
-          : cardStyle === "bordered"
-            ? "12px"
-            : "8px",
-      boxShadow:
-        cardStyle === "glass"
-          ? `0 4px 24px ${hexToRgba(accentColor, 0.3)}`
-          : cardStyle === "bordered"
-            ? "0 2px 8px rgba(0,0,0,0.1)"
-            : "none",
-      border: cardStyle === "bordered" ? `1.5px solid ${accentColor}` : "none",
-      backdropFilter: cardStyle === "glass" ? "blur(20px)" : "none",
-      backgroundColor: background,
-      backgroundImage:
-        cardStyle === "glass"
-          ? "linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.1))"
+  const containerStyle = {
+    ...baseStyles,
+    borderRadius:
+      cardStyle === "glass"
+        ? "20px"
+        : cardStyle === "bordered"
+          ? "12px"
+          : "8px",
+    boxShadow:
+      cardStyle === "glass"
+        ? `0 4px 24px ${hexToRgba(accentColor, 0.3)}`
+        : cardStyle === "bordered"
+          ? "0 2px 8px rgba(0,0,0,0.1)"
           : "none",
-      padding: "24px",
-      overflow: "hidden",
-      position: "relative"
-    };
+    border: cardStyle === "bordered" ? `1.5px solid ${accentColor}` : "none",
+    backdropFilter: cardStyle === "glass" ? "blur(20px)" : "none",
+    backgroundColor: background,
+    backgroundImage:
+      cardStyle === "glass"
+        ? "linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.1))"
+        : "none",
+    padding: "24px",
+    overflow: "hidden",
+    position: "relative"
+  };
 
-    const avatarStyle = {
-      border: `2px solid ${accentColor}`,
-      borderRadius:
-        avatarShape === "circle"
-          ? "50%"
-          : avatarShape === "rounded"
-            ? "20%"
-            : "0%"
-    };
+  const avatarStyle = {
+    border: `2px solid ${accentColor}`,
+    borderRadius:
+      avatarShape === "circle"
+        ? "50%"
+        : avatarShape === "rounded"
+          ? "20%"
+          : "0%"
+  };
 
-    const buttonStyle = {
-      borderRadius:
-        buttonShape === "round"
-          ? "6px"
-          : buttonShape === "pill"
-            ? "50px"
-            : "0px",
-      backgroundColor: accentColor,
-      borderColor: accentColor,
-      fontFamily,
-      fontSize: `${fontSize}px`
-    };
+  const buttonStyle = {
+    borderRadius:
+      buttonShape === "round" ? "6px" : buttonShape === "pill" ? "50px" : "0px",
+    backgroundColor: accentColor,
+    borderColor: accentColor,
+    fontFamily,
+    fontSize: `${fontSize}px`
+  };
 
-    const inputStyle = {
-      backgroundColor:
-        cardStyle === "glass" ? "rgba(255,255,255,0.1)" : undefined,
-      borderColor: accentColor,
-      color: textColor,
-      fontFamily,
-      fontSize: `${fontSize}px`
-    };
+  const inputStyle = {
+    backgroundColor:
+      cardStyle === "glass" ? "rgba(255,255,255,0.1)" : undefined,
+    borderColor: accentColor,
+    color: textColor,
+    fontFamily,
+    fontSize: `${fontSize}px`
+  };
 
-    const linkButtonStyle = {
-      color: accentColor,
-      fontWeight: linkStyle === "bold" ? "bold" : "normal",
-      textDecoration: linkStyle === "underline" ? "underline" : "none",
-      borderRadius:
-        buttonShape === "round"
-          ? "6px"
-          : buttonShape === "pill"
-            ? "50px"
-            : "0px",
-      fontFamily,
-      fontSize: `${fontSize}px`
-    };
+  const linkButtonStyle = {
+    color: accentColor,
+    fontWeight: linkStyle === "bold" ? "bold" : "normal",
+    textDecoration: linkStyle === "underline" ? "underline" : "none",
+    borderRadius:
+      buttonShape === "round" ? "6px" : buttonShape === "pill" ? "50px" : "0px",
+    fontFamily,
+    fontSize: `${fontSize}px`
+  };
 
-    const textStyles = {
-      primary: { ...baseStyles, color: accentColor },
-      secondary: { ...baseStyles, color: textColor, opacity: 0.7 },
-      muted: { ...baseStyles, color: textColor, opacity: 0.6 }
-    };
+  const textStyles = {
+    primary: { ...baseStyles, color: accentColor },
+    secondary: { ...baseStyles, color: textColor, opacity: 0.7 },
+    muted: { ...baseStyles, color: textColor, opacity: 0.6 }
+  };
 
-    const tagStyle = {
-      backgroundColor: accentColor,
-      color: "white",
-      borderRadius: buttonStyle.borderRadius,
-      fontFamily,
-      fontSize: `${Math.max(fontSize - 2, 12)}px`
-    };
+  const tagStyle = {
+    backgroundColor: accentColor,
+    color: "white",
+    borderRadius: buttonStyle.borderRadius,
+    fontFamily,
+    fontSize: `${Math.max(fontSize - 2, 12)}px`
+  };
 
-    return {
-      base: baseStyles,
-      container: containerStyle,
-      avatar: avatarStyle,
-      button: buttonStyle,
-      input: inputStyle,
-      linkButton: linkButtonStyle,
-      text: textStyles,
-      tag: tagStyle,
-      accent: accentColor,
-      hexToRgba,
-      banner: {
-        backgroundImage: `url(${banner})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "120px",
-        width: "calc(100% + 48px)",
-        margin: "-24px -24px 24px -24px",
-        borderTopLeftRadius: containerStyle.borderRadius,
-        borderTopRightRadius: containerStyle.borderRadius
-      }
-    };
-  }, [appearanceSettings]);
+  const dynamicStyles = {
+    base: baseStyles,
+    container: containerStyle,
+    avatar: avatarStyle,
+    button: buttonStyle,
+    input: inputStyle,
+    linkButton: linkButtonStyle,
+    text: textStyles,
+    tag: tagStyle,
+    accent: accentColor,
+    hexToRgba,
+    banner: {
+      backgroundImage: `url(${banner})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      height: "120px",
+      width: "calc(100% + 48px)",
+      margin: "-24px -24px 24px -24px",
+      borderTopLeftRadius: containerStyle.borderRadius,
+      borderTopRightRadius: containerStyle.borderRadius
+    }
+  };
 
   // Apply base styles to the entire component
   const componentStyle = {
