@@ -173,7 +173,7 @@ export default function Explore() {
                       {item?.bio || "No bio available"}
                     </Paragraph>
                     <Space size="small">
-                      <Tag color="blue">#{item?.id}</Tag>
+                      <Tag>#{item?.tokenId}</Tag>
                       <Tag
                         variant="outlined"
                         color={

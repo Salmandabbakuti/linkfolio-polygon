@@ -18,10 +18,12 @@ import {
   Spin,
   Tabs,
   Select,
+  Result,
   ColorPicker,
   InputNumber,
   Collapse,
   Tag,
+  Skeleton,
   App as AntdApp
 } from "antd";
 import {
@@ -132,6 +134,23 @@ export default function Profile({ params }) {
   const modeParam = searchParams.get("mode");
 
   const isProfileOwner = profile?.owner?.id === account?.toLowerCase();
+  const isLoadingProfile = loading?.read;
+  const hasProfile = Boolean(profile?.id);
+  const isEditMode = mode === "edit";
+  const showProfileNotFound = !isLoadingProfile && !hasProfile && !isEditMode;
+  const previewProfile = isEditMode
+    ? {
+        ...profile,
+        ...(isPreviewExpanded ? previewData : profileFormValues),
+        links:
+          (isPreviewExpanded ? previewData?.links : profileFormValues?.links) ||
+          [],
+        avatar: avatarFile
+          ? URL.createObjectURL(avatarFile?.originFileObj)
+          : profile?.avatar ||
+            `https://api.dicebear.com/5.x/open-peeps/svg?seed=${handle}`
+      }
+    : null;
 
   // Effects
   useEffect(() => {
@@ -378,20 +397,128 @@ export default function Profile({ params }) {
       setLoading({ ...loading, write: false });
     }
   };
+
+  if (isLoadingProfile) {
+    return (
+      <Card
+        variant="outlined"
+        cover={
+          <Skeleton.Node
+            style={{
+              width: "100%",
+              height: 120,
+              borderRadius: "12px 12px 0 0"
+            }}
+            active
+          />
+        }
+        actions={[
+          <Skeleton.Button
+            shape="round"
+            active
+            size="small"
+            style={{ width: 180 }}
+          />
+        ]}
+        extra={
+          <Skeleton.Button
+            key="1"
+            shape="round"
+            active
+            size="small"
+            style={{ width: 180 }}
+          />
+        }
+        style={{
+          padding: "24px"
+        }}
+      >
+        <Space orientation="vertical" align="center" style={{ width: "100%" }}>
+          <Skeleton.Avatar active size={88} shape="circle" />
+
+          <Skeleton.Button
+            shape="round"
+            active
+            size="small"
+            style={{ width: 180 }}
+          />
+          <Skeleton.Button
+            shape="round"
+            active
+            size="small"
+            style={{ width: 120 }}
+          />
+          <Skeleton.Button
+            shape="round"
+            active
+            size="small"
+            style={{ width: 180 }}
+          />
+
+          <Space style={{ width: "100%" }}>
+            <Skeleton.Button
+              shape="round"
+              active
+              size="small"
+              style={{ width: 5 }}
+            />
+            <Skeleton.Button
+              shape="round"
+              active
+              size="small"
+              style={{ width: 40 }}
+            />
+            <Skeleton.Button
+              shape="round"
+              active
+              size="small"
+              style={{ width: 80 }}
+            />
+            <Skeleton.Button
+              shape="round"
+              active
+              size="small"
+              style={{ width: 160 }}
+            />
+          </Space>
+          <Skeleton active paragraph={{ rows: 8 }} title round />
+        </Space>
+      </Card>
+    );
+  }
+
+  if (showProfileNotFound) {
+    return (
+      <Result
+        status="404"
+        title={`@${handle} not found`}
+        subTitle="The page you are looking for does not exist. Want this to be your handle? 
+ you can create it now."
+        extra={[
+          <Button key="create" type="primary" onClick={() => setMode("edit")}>
+            Create Profile
+          </Button>,
+          <Link key="home" href="/#get-started">
+            <Button>See How It Works</Button>
+          </Link>
+        ]}
+      />
+    );
+  }
+
   return (
     <div>
-      {mode === "edit" ? (
+      {isEditMode ? (
         <Row gutter={16}>
           {/* Left: Editing Section - Hide when preview is expanded */}
           {!isPreviewExpanded && (
             <Col xs={24} lg={12} xl={14}>
               <Card
-                title={profile?.id ? "Edit Profile" : "Create Profile"}
+                title={hasProfile ? "Edit Profile" : "Create Profile"}
                 variant="outlined"
-                loading={loading?.read}
                 extra={
                   <Space>
-                    {profile?.id && (
+                    {hasProfile && (
                       <Button
                         shape="circle"
                         title="Back"
@@ -1171,47 +1298,34 @@ export default function Profile({ params }) {
                 top: "20px"
               }}
               extra={
-                <Space wrap>
-                  <Button
-                    title={
-                      isPreviewExpanded
-                        ? "Collapse Preview"
-                        : "Expand to Fullscreen"
+                <Button
+                  title={
+                    isPreviewExpanded
+                      ? "Collapse Preview"
+                      : "Expand to Fullscreen"
+                  }
+                  shape="circle"
+                  icon={
+                    isPreviewExpanded ? (
+                      <CompressOutlined />
+                    ) : (
+                      <ExpandAltOutlined />
+                    )
+                  }
+                  onClick={() => {
+                    if (!isPreviewExpanded) {
+                      // Capture form values before expanding
+                      const currentFormValues =
+                        profileFormData.getFieldsValue();
+                      setPreviewData(currentFormValues);
                     }
-                    shape="circle"
-                    icon={
-                      isPreviewExpanded ? (
-                        <CompressOutlined />
-                      ) : (
-                        <ExpandAltOutlined />
-                      )
-                    }
-                    onClick={() => {
-                      if (!isPreviewExpanded) {
-                        // Capture form values before expanding
-                        const currentFormValues =
-                          profileFormData.getFieldsValue();
-                        setPreviewData(currentFormValues);
-                      }
-                      setIsPreviewExpanded(!isPreviewExpanded);
-                    }}
-                  />
-                </Space>
+                    setIsPreviewExpanded(!isPreviewExpanded);
+                  }}
+                />
               }
             >
               <ProfileCard
-                profile={{
-                  ...profile,
-                  ...(isPreviewExpanded ? previewData : profileFormValues),
-                  links:
-                    (isPreviewExpanded
-                      ? previewData?.links
-                      : profileFormValues?.links) || [], //priority to form values
-                  avatar: avatarFile
-                    ? URL.createObjectURL(avatarFile?.originFileObj)
-                    : profile?.avatar ||
-                      `https://api.dicebear.com/5.x/open-peeps/svg?seed=${handle}`
-                }}
+                profile={previewProfile}
                 appearanceSettings={appearanceSettings}
               />
             </Card>
@@ -1222,7 +1336,6 @@ export default function Profile({ params }) {
           <Card
             variant="outlined"
             hoverable
-            loading={loading?.read}
             extra={
               <Space wrap>
                 {isProfileOwner && (
@@ -1234,7 +1347,7 @@ export default function Profile({ params }) {
                     onClick={() => setMode("edit")}
                   />
                 )}
-                {profile?.id && (
+                {hasProfile && (
                   <Space>
                     <Button
                       type="text"
@@ -1280,22 +1393,10 @@ export default function Profile({ params }) {
               </Space>
             }
           >
-            {mode === "view" && !profile?.id ? (
-              <>
-                <h2>The page you are looking for does not exist.</h2>
-                <h3>
-                  Want this to be your handle?{" "}
-                  <Button type="link" onClick={() => setMode("edit")}>
-                    Create it now!
-                  </Button>
-                </h3>
-              </>
-            ) : (
-              <ProfileCard
-                profile={profile}
-                appearanceSettings={appearanceSettings}
-              />
-            )}
+            <ProfileCard
+              profile={profile}
+              appearanceSettings={appearanceSettings}
+            />
           </Card>
           <Link
             href="/#get-started"
