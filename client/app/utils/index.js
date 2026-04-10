@@ -160,6 +160,7 @@ export const GET_PROFILE_QUERY = gql`
         author {
           id
           name
+          avatar
           handle
         }
         createdAt

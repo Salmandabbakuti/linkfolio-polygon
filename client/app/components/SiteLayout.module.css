@@ -116,6 +116,12 @@
   .siteLogo {
     font-size: 1.25rem;
   }
+
+  .bottomFooterMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -135,6 +141,10 @@
   .headerActions {
     gap: 8px;
   }
+
+  .bottomFooterLinks {
+    gap: 6px;
+  }
 }
 
 .siteContent {
@@ -142,4 +152,73 @@
   padding: 0;
   min-height: calc(100vh - 200px);
   position: relative;
+}
+
+.bottomFooter {
+  margin: 0;
+  padding: 20px 0 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border-color);
+}
+
+.bottomFooterInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap-reverse;
+}
+
+.bottomFooterMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bottomFooterCopyright {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.bottomFooterLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bottomFooterLink {
+  color: var(--text-muted);
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.bottomFooterDot {
+  color: var(--text-muted);
+}
+
+.bottomFooterStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+}
+
+.statusIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success-color);
+  animation: pulse 2s infinite;
+}
+
+.bottomFooterStatusText {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
 }

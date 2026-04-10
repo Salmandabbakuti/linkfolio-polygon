@@ -6,19 +6,18 @@ import {
   List,
   Input,
   Button,
-  message,
   Space,
   Typography,
   Divider,
   Tag,
   Badge,
-  Image
+  Image,
+  App as AntdApp
 } from "antd";
 import {
   LinkOutlined,
   DollarOutlined,
-  ExportOutlined,
-  CopyOutlined
+  ExportOutlined
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -38,7 +37,7 @@ import { EXPLORER_URL } from "@/app/utils/constants";
 
 dayjs.extend(relativeTime);
 
-const { Paragraph } = Typography;
+const { Paragraph, Text, Title } = Typography;
 
 export default function ProfileCard({ profile, appearanceSettings = {} }) {
   const [postInput, setPostInput] = useState("");
@@ -61,6 +60,7 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
     { label: "200 POL", value: "200" }
   ];
 
+  const { message } = AntdApp.useApp();
   const { address: account } = useAppKitAccount();
   const { selectedNetworkId } = useAppKitState();
   const { walletProvider } = useAppKitProvider("eip155");
@@ -209,14 +209,14 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
         cardStyle === "glass"
           ? "20px"
           : cardStyle === "bordered"
-          ? "12px"
-          : "8px",
+            ? "12px"
+            : "8px",
       boxShadow:
         cardStyle === "glass"
           ? `0 4px 24px ${hexToRgba(accentColor, 0.3)}`
           : cardStyle === "bordered"
-          ? "0 2px 8px rgba(0,0,0,0.1)"
-          : "none",
+            ? "0 2px 8px rgba(0,0,0,0.1)"
+            : "none",
       border: cardStyle === "bordered" ? `1.5px solid ${accentColor}` : "none",
       backdropFilter: cardStyle === "glass" ? "blur(20px)" : "none",
       backgroundColor: background,
@@ -235,8 +235,8 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
         avatarShape === "circle"
           ? "50%"
           : avatarShape === "rounded"
-          ? "20%"
-          : "0%"
+            ? "20%"
+            : "0%"
     };
 
     const buttonStyle = {
@@ -244,8 +244,8 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
         buttonShape === "round"
           ? "6px"
           : buttonShape === "pill"
-          ? "50px"
-          : "0px",
+            ? "50px"
+            : "0px",
       backgroundColor: accentColor,
       borderColor: accentColor,
       fontFamily,
@@ -269,8 +269,8 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
         buttonShape === "round"
           ? "6px"
           : buttonShape === "pill"
-          ? "50px"
-          : "0px",
+            ? "50px"
+            : "0px",
       fontFamily,
       fontSize: `${fontSize}px`
     };
@@ -380,7 +380,8 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
             height={100}
             style={dynamicStyles.avatar}
           />
-          <h2
+          <Title
+            level={2}
             style={{
               ...dynamicStyles.text.primary,
               fontSize: appearanceSettings.fontSize * 1.6 + "px",
@@ -388,43 +389,33 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
             }}
           >
             {profile?.name}
-          </h2>
-          <p style={{ ...dynamicStyles.text.secondary, margin: "0 0 8px 0" }}>
+          </Title>
+          <Text style={{ ...dynamicStyles.text.secondary }}>
             @{profile?.handle}
-          </p>
-          <p style={{ ...dynamicStyles.text.secondary, margin: "0 0 16px 0" }}>
+          </Text>
+          <Paragraph ellipsis style={{ ...dynamicStyles.text.secondary }}>
             {profile?.bio}
-          </p>
-
-          <Tag title="Category" bordered={false} style={dynamicStyles.tag}>
-            {profile?.category}
-          </Tag>
-          <Tag
-            title="Tips"
-            icon={<DollarOutlined />}
-            bordered={false}
-            style={{ ...dynamicStyles.tag, marginLeft: "8px" }}
-          >
-            {formatEther(profile?.tipAmount || 0n)} POL
-          </Tag>
-          <Tag
-            bordered={false}
-            style={{ ...dynamicStyles.tag, marginLeft: "8px" }}
-          >
-            <span
-              title="Copy address"
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  profile?.owner?.id || account || ""
-                );
-                message.success("Address copied to clipboard!");
-              }}
-              style={{ cursor: "pointer" }}
+          </Paragraph>
+          <Space wrap size="small" align="center">
+            <Tag title="NFT ID" style={dynamicStyles.tag}>
+              #{profile?.id || 0}
+            </Tag>
+            <Tag title="Category" style={dynamicStyles.tag}>
+              {profile?.category}
+            </Tag>
+            <Tag
+              title="Tips"
+              icon={<DollarOutlined />}
+              style={{ ...dynamicStyles.tag, marginLeft: "8px" }}
             >
-              {ellipsisString(profile?.owner?.id || account || "", 8, 5)}{" "}
-              <CopyOutlined style={{ marginLeft: "4px" }} />
-            </span>
-          </Tag>
+              {formatEther(profile?.tipAmount || 0n)} POL
+            </Tag>
+            <Tag style={{ ...dynamicStyles.tag, marginLeft: "8px" }}>
+              <Text copyable={{ text: profile?.owner?.id }}>
+                {ellipsisString(profile?.owner?.id || account || "", 8, 5)}
+              </Text>
+            </Tag>
+          </Space>
         </div>
 
         <Tabs
@@ -501,7 +492,10 @@ export default function ProfileCard({ profile, appearanceSettings = {} }) {
                                 cursor: "pointer",
                                 border: "1px solid grey"
                               }}
-                              src={`https://api.dicebear.com/5.x/open-peeps/svg?seed=${item?.author?.id}`}
+                              src={
+                                item?.author?.avatar ||
+                                `https://api.dicebear.com/5.x/open-peeps/svg?seed=${item?.author?.id}`
+                              }
                             />
                           }
                           title={

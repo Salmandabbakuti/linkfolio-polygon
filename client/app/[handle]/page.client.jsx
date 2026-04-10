@@ -7,7 +7,6 @@ import {
   Input,
   Button,
   Upload,
-  message,
   Avatar,
   Space,
   Popconfirm,
@@ -22,7 +21,8 @@ import {
   ColorPicker,
   InputNumber,
   Collapse,
-  Tag
+  Tag,
+  App as AntdApp
 } from "antd";
 import {
   GlobalOutlined,
@@ -89,6 +89,7 @@ const fontFamilies = [
 
 export default function Profile({ params }) {
   const { handle } = use(params);
+  const { message } = AntdApp.useApp();
 
   const initialValues = {
     handle,
@@ -434,7 +435,7 @@ export default function Profile({ params }) {
               >
                 <Tabs
                   defaultActiveKey="profile"
-                  tabPosition="top"
+                  tabPlacement="top"
                   items={[
                     {
                       key: "profile",
@@ -450,7 +451,7 @@ export default function Profile({ params }) {
                           <Spin
                             spinning={loading?.write}
                             size="large"
-                            tip="Transaction in progress..."
+                            description="Transaction in progress..."
                             indicator={<LoadingOutlined spin />}
                           >
                             <Row gutter={16}>
@@ -616,7 +617,7 @@ export default function Profile({ params }) {
                                       ]}
                                     >
                                       <Input
-                                        addonBefore={
+                                        prefix={
                                           social.icon || <GlobalOutlined />
                                         }
                                         placeholder={`Enter your ${social.name} profile link`}
@@ -678,12 +679,12 @@ export default function Profile({ params }) {
                             // activeKey={["templates"]}
                             // onChange={setTemplateCollapseActiveKey}
                             style={{ marginBottom: "16px" }}
-                            expandIconPosition="end"
+                            expandIconPlacement="end"
                             items={[
                               {
                                 key: "templates",
                                 label: (
-                                  <Space direction="vertical">
+                                  <Space orientation="vertical">
                                     <Typography.Text strong>
                                       🎨 Quick Templates{" "}
                                       <Tag
@@ -807,9 +808,10 @@ export default function Profile({ params }) {
                                                   .buttonShape === "pill"
                                                   ? "50%"
                                                   : template.settings
-                                                      .buttonShape === "square"
-                                                  ? "2px"
-                                                  : "4px",
+                                                        .buttonShape ===
+                                                      "square"
+                                                    ? "2px"
+                                                    : "4px",
                                               border:
                                                 template.settings.cardStyle ===
                                                 "bordered"
@@ -838,9 +840,10 @@ export default function Profile({ params }) {
                                                   .avatarShape === "circle"
                                                   ? "50%"
                                                   : template.settings
-                                                      .avatarShape === "rounded"
-                                                  ? "3px"
-                                                  : "0px",
+                                                        .avatarShape ===
+                                                      "rounded"
+                                                    ? "3px"
+                                                    : "0px",
                                               opacity: 0.8
                                             }}
                                           />
@@ -1169,30 +1172,32 @@ export default function Profile({ params }) {
                 top: "20px"
               }}
               extra={
-                <Button
-                  title={
-                    isPreviewExpanded
-                      ? "Collapse Preview"
-                      : "Expand to Fullscreen"
-                  }
-                  shape="circle"
-                  icon={
-                    isPreviewExpanded ? (
-                      <CompressOutlined />
-                    ) : (
-                      <ExpandAltOutlined />
-                    )
-                  }
-                  onClick={() => {
-                    if (!isPreviewExpanded) {
-                      // Capture form values before expanding
-                      const currentFormValues =
-                        profileFormData.getFieldsValue();
-                      setPreviewData(currentFormValues);
+                <Space wrap>
+                  <Button
+                    title={
+                      isPreviewExpanded
+                        ? "Collapse Preview"
+                        : "Expand to Fullscreen"
                     }
-                    setIsPreviewExpanded(!isPreviewExpanded);
-                  }}
-                />
+                    shape="circle"
+                    icon={
+                      isPreviewExpanded ? (
+                        <CompressOutlined />
+                      ) : (
+                        <ExpandAltOutlined />
+                      )
+                    }
+                    onClick={() => {
+                      if (!isPreviewExpanded) {
+                        // Capture form values before expanding
+                        const currentFormValues =
+                          profileFormData.getFieldsValue();
+                        setPreviewData(currentFormValues);
+                      }
+                      setIsPreviewExpanded(!isPreviewExpanded);
+                    }}
+                  />
+                </Space>
               }
             >
               <ProfileCard
@@ -1220,12 +1225,12 @@ export default function Profile({ params }) {
             hoverable
             loading={loading?.read}
             extra={
-              <Space>
+              <Space wrap>
                 {isProfileOwner && (
                   <Button
+                    type="text"
                     title="Edit Profile"
                     shape="circle"
-                    type="primary"
                     icon={<EditOutlined />}
                     onClick={() => setMode("edit")}
                   />
@@ -1233,12 +1238,14 @@ export default function Profile({ params }) {
                 {profile?.id && (
                   <Space>
                     <Button
+                      type="text"
                       title="Refresh"
                       shape="circle"
                       icon={<SyncOutlined spin={loading?.read} />}
                       onClick={fetchProfile}
                     />
                     <Button
+                      type="text"
                       title="View on Explorer"
                       shape="circle"
                       icon={<ExportOutlined />}
@@ -1247,6 +1254,7 @@ export default function Profile({ params }) {
                       rel="noopener noreferrer"
                     />
                     <Button
+                      type="text"
                       title="Share Profile"
                       shape="circle"
                       icon={<ShareAltOutlined />}

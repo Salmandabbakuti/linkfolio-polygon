@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import "@ant-design/v5-patch-for-react-19";
-import { ConfigProvider, theme } from "antd";
+import { ConfigProvider, theme, App as AntdApp } from "antd";
 import { createAppKit } from "@reown/appkit/react";
 import { polygonAmoy, polygon, mainnet } from "@reown/appkit/networks";
 import { EthersAdapter } from "@reown/appkit-adapter-ethers";
@@ -205,7 +204,7 @@ export default function Web3Provider({ children }) {
         }
       }}
     >
-      {mounted && children}
+      <AntdApp>{mounted && children}</AntdApp>
     </ConfigProvider>
   );
 }

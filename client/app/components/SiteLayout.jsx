@@ -1,16 +1,17 @@
 "use client";
-import { Layout, Menu, Drawer, Button } from "antd";
+import { Layout, Menu, Drawer, Button, Badge, Typography, Tag } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import Link from "next/link";
-import Footer from "./Footer";
 import styles from "./SiteLayout.module.css";
 import "antd/dist/reset.css";
 
 const { Header, Content } = Layout;
+const { Text } = Typography;
 
 export default function SiteLayout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const currentYear = new Date().getFullYear();
 
   const navigationItems = [
     { key: "features", label: "Features", href: "/#features" },
@@ -57,7 +58,7 @@ export default function SiteLayout({ children }) {
           placement="right"
           onClose={() => setMobileMenuOpen(false)}
           open={mobileMenuOpen}
-          width={250}
+          size={250}
         >
           <Menu
             mode="vertical"
@@ -73,7 +74,29 @@ export default function SiteLayout({ children }) {
 
       <Content className={styles.siteContent}>{children}</Content>
 
-      <Footer />
+      <footer className={styles.bottomFooter}>
+        <div className={`container ${styles.bottomFooterInner}`}>
+          <div className={styles.bottomFooterMeta}>
+            <p className={styles.bottomFooterCopyright}>
+              © {currentYear} LinkFolio. All rights reserved.
+            </p>
+            <div className={styles.bottomFooterLinks}>
+              <Link href="#" className={styles.bottomFooterLink}>
+                Privacy Policy
+              </Link>
+              <span className={styles.bottomFooterDot}>•</span>
+              <Link href="#" className={styles.bottomFooterLink}>
+                Terms of Service
+              </Link>
+            </div>
+          </div>
+
+          <Tag title="All systems operational">
+            <Text>v0.7.0</Text>{" "}
+            <Badge status="processing" color="#52c41a" text="All OK" />
+          </Tag>
+        </div>
+      </footer>
     </Layout>
   );
 }

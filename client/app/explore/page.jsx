@@ -5,14 +5,14 @@ import {
   Input,
   Button,
   Space,
-  message,
   Row,
   Col,
   Select,
   Card,
   Avatar,
   Empty,
-  Tag
+  Tag,
+  App as AntdApp
 } from "antd";
 import Link from "next/link";
 import { useAppKitAccount } from "@reown/appkit/react";
@@ -21,7 +21,6 @@ import { SyncOutlined } from "@ant-design/icons";
 
 const { Title, Paragraph } = Typography;
 const { Search } = Input;
-const { Option } = Select;
 
 export default function Explore() {
   const [dataLoading, setDataLoading] = useState(false);
@@ -30,6 +29,7 @@ export default function Explore() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { address: account } = useAppKitAccount();
+  const { message } = AntdApp.useApp();
 
   const fetchProfiles = () => {
     setDataLoading(true);
@@ -95,6 +95,7 @@ export default function Explore() {
       <div style={{ maxWidth: 600, margin: "0 auto 32px auto" }}>
         <Space wrap>
           <Search
+            size="large"
             allowClear
             placeholder="Search by name, handle, or bio"
             onSearch={fetchProfiles}
@@ -105,19 +106,18 @@ export default function Explore() {
             style={{ width: 300 }}
           />
           <Select
+            size="large"
             defaultValue={false}
             onChange={(value) => {
               setShowMyProfiles(value);
             }}
             style={{ minWidth: 120 }}
-          >
-            <Option value={false}>By All</Option>
-            <Option value={true} disabled={!account}>
-              By Me
-            </Option>
-          </Select>
+            options={[
+              { value: false, label: "By All" },
+              { value: true, label: "By Me", disabled: !account }
+            ]}
+          />
           <Button
-            type="primary"
             shape="circle"
             icon={<SyncOutlined spin={dataLoading} />}
             onClick={fetchProfiles}
@@ -144,56 +144,50 @@ export default function Explore() {
           ) : (
             profiles.map((item) => (
               <Col xs={24} sm={12} md={8} lg={6} key={item.handle}>
-                <Card
-                  hoverable
-                  style={{
-                    borderRadius: 16,
-                    textAlign: "center",
-                    minHeight: 320,
-                    boxShadow: "0 2px 16px #6366f111"
-                  }}
-                  actions={[
-                    <Link href={`/${item?.handle}`} key="view-profile">
-                      <Button variant="outlined" color="primary" shape="round">
-                        View Profile
-                      </Button>
-                    </Link>
-                  ]}
-                >
-                  <Avatar
-                    src={
-                      item?.avatar ||
-                      `https://api.dicebear.com/5.x/open-peeps/svg?seed=${item?.handle}`
-                    }
-                    alt="avatar"
-                    size={80}
-                    shape="circle"
-                    style={{ border: "1px solid grey", marginBottom: 16 }}
-                  />
-                  <Title level={4} style={{ marginBottom: 4 }}>
-                    {item?.name}
-                  </Title>
-                  <Paragraph type="secondary" style={{ marginBottom: 8 }}>
-                    @{item?.handle}
-                  </Paragraph>
-                  <Paragraph ellipsis={{ rows: 1 }} style={{ color: "#666" }}>
-                    {item?.bio || "No bio available"}
-                  </Paragraph>
-                  <Tag
-                    bordered={false}
-                    color={
-                      item?.category === "Personal"
-                        ? "magenta"
-                        : item?.category === "Business"
-                        ? "blue"
-                        : item?.category === "Creator"
-                        ? "green"
-                        : "default"
-                    }
+                <Link href={`/${item?.handle}`} key="view-profile">
+                  <Card
+                    hoverable
+                    variant="outlined"
+                    style={{
+                      borderRadius: 16,
+                      textAlign: "center"
+                    }}
                   >
-                    {item?.category}
-                  </Tag>
-                </Card>
+                    <Avatar
+                      src={
+                        item?.avatar ||
+                        `https://api.dicebear.com/5.x/open-peeps/svg?seed=${item?.handle}`
+                      }
+                      alt="avatar"
+                      size={80}
+                      shape="circle"
+                      style={{ border: "1px solid grey", marginBottom: 16 }}
+                    />
+                    <Title level={4} style={{ marginBottom: 4 }}>
+                      {item?.name}
+                    </Title>
+                    <Paragraph type="secondary" style={{ marginBottom: 8 }}>
+                      @{item?.handle}
+                    </Paragraph>
+                    <Paragraph ellipsis={{ rows: 1 }} style={{ color: "#666" }}>
+                      {item?.bio || "No bio available"}
+                    </Paragraph>
+                    <Tag
+                      variant="outlined"
+                      color={
+                        item?.category === "Personal"
+                          ? "magenta"
+                          : item?.category === "Business"
+                            ? "blue"
+                            : item?.category === "Creator"
+                              ? "green"
+                              : "default"
+                      }
+                    >
+                      {item?.category}
+                    </Tag>
+                  </Card>
+                </Link>
               </Col>
             ))
           )}
