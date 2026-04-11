@@ -429,8 +429,8 @@ export default function Profile({ params }) {
             style={{ width: 180 }}
           />
         }
-        style={{
-          padding: "24px"
+        styles={{
+          root: { padding: 0 }
         }}
       >
         <Space orientation="vertical" align="center" style={{ width: "100%" }}>
@@ -558,6 +558,9 @@ export default function Profile({ params }) {
                     )}
                   </Space>
                 }
+                style={{
+                  marginBottom: "10px"
+                }}
               >
                 <Tabs
                   defaultActiveKey="profile"
@@ -1263,7 +1266,7 @@ export default function Profile({ params }) {
                       )
                     }
                   ]}
-                />{" "}
+                />
               </Card>
             </Col>
           )}
@@ -1295,7 +1298,12 @@ export default function Profile({ params }) {
               hoverable
               style={{
                 position: "sticky",
-                top: "20px"
+                overflow: "hidden"
+              }}
+              styles={{
+                body: {
+                  padding: 0
+                }
               }}
               extra={
                 <Button
@@ -1336,6 +1344,14 @@ export default function Profile({ params }) {
           <Card
             variant="outlined"
             hoverable
+            style={{
+              overflow: "hidden"
+            }}
+            styles={{
+              body: {
+                padding: 0
+              }
+            }}
             extra={
               <Space wrap>
                 {isProfileOwner && (
