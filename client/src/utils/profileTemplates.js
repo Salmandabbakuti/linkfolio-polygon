@@ -4,11 +4,6 @@ export const profileTemplates = [
     id: "modern-glass",
     name: "Modern Glass",
     description: "Clean glassmorphic design with blue accents",
-    preview: {
-      background: "#E3F2FD",
-      cardStyle: "glass",
-      accentColor: "#1677FF"
-    },
     settings: {
       fontFamily: "Inter, sans-serif",
       fontSize: 16,
@@ -26,11 +21,6 @@ export const profileTemplates = [
     id: "neon-cyberpunk",
     name: "Neon Cyberpunk",
     description: "Dark theme with neon pink accents",
-    preview: {
-      background: "#1A1A1A",
-      cardStyle: "bordered",
-      accentColor: "#EB2F96"
-    },
     settings: {
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: 15,
@@ -70,11 +60,6 @@ export const profileTemplates = [
     id: "ocean-breeze",
     name: "Ocean Breeze",
     description: "Fresh aqua theme with smooth curves",
-    preview: {
-      background: "#E0F7FA",
-      cardStyle: "glass",
-      accentColor: "#13A8A8"
-    },
     settings: {
       fontFamily: "Roboto, sans-serif",
       fontSize: 16,
@@ -92,11 +77,6 @@ export const profileTemplates = [
     id: "dark-void",
     name: "Dark Void",
     description: "Deep black with electric blue highlights",
-    preview: {
-      background: "#0A0A0A",
-      cardStyle: "glass",
-      accentColor: "#1890FF"
-    },
     settings: {
       fontFamily: "Inter, sans-serif",
       fontSize: 16,
@@ -114,11 +94,6 @@ export const profileTemplates = [
     id: "forest-zen",
     name: "Forest Zen",
     description: "Natural green tones with minimal design",
-    preview: {
-      background: "#E8F5E8",
-      cardStyle: "solid",
-      accentColor: "#52C41A"
-    },
     settings: {
       fontFamily: "system-ui, sans-serif",
       fontSize: 16,
@@ -136,11 +111,6 @@ export const profileTemplates = [
     id: "midnight-purple",
     name: "Midnight Purple",
     description: "Dark purple theme with mystical vibes",
-    preview: {
-      background: "#1F1A2D",
-      cardStyle: "bordered",
-      accentColor: "#B37FEB"
-    },
     settings: {
       fontFamily: "Georgia, serif",
       fontSize: 17,
@@ -158,11 +128,6 @@ export const profileTemplates = [
     id: "minimalist-mono",
     name: "Minimalist Mono",
     description: "Clean black and white with sharp edges",
-    preview: {
-      background: "#FFFFFF",
-      cardStyle: "bordered",
-      accentColor: "#000000"
-    },
     settings: {
       fontFamily: "Helvetica, Arial, sans-serif",
       fontSize: 15,
@@ -180,11 +145,6 @@ export const profileTemplates = [
     id: "carbon-steel",
     name: "Carbon Steel",
     description: "Industrial dark theme with steel accents",
-    preview: {
-      background: "#1C1C1C",
-      cardStyle: "solid",
-      accentColor: "#8C8C8C"
-    },
     settings: {
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: 16,
@@ -202,11 +162,6 @@ export const profileTemplates = [
     id: "retro-vibes",
     name: "Retro Vibes",
     description: "Nostalgic 80s inspired with bold colors",
-    preview: {
-      background: "#FCE4EC",
-      cardStyle: "solid",
-      accentColor: "#F5222D"
-    },
     settings: {
       fontFamily: "'Times New Roman', Times, serif",
       fontSize: 16,
@@ -224,11 +179,6 @@ export const profileTemplates = [
     id: "emerald-night",
     name: "Emerald Night",
     description: "Dark green forest theme with gold accents",
-    preview: {
-      background: "#0D1B0D",
-      cardStyle: "glass",
-      accentColor: "#52C41A"
-    },
     settings: {
       fontFamily: "Roboto, sans-serif",
       fontSize: 16,
@@ -246,11 +196,6 @@ export const profileTemplates = [
     id: "corporate-blue",
     name: "Corporate Blue",
     description: "Professional blue theme for business",
-    preview: {
-      background: "#F0F5FF",
-      cardStyle: "bordered",
-      accentColor: "#2F54EB"
-    },
     settings: {
       fontFamily: "Arial, Helvetica, sans-serif",
       fontSize: 16,
@@ -268,11 +213,6 @@ export const profileTemplates = [
     id: "crimson-shadow",
     name: "Crimson Shadow",
     description: "Dark red theme with dramatic shadows",
-    preview: {
-      background: "#1A0A0A",
-      cardStyle: "bordered",
-      accentColor: "#FF4D4F"
-    },
     settings: {
       fontFamily: "Georgia, serif",
       fontSize: 17,
@@ -291,13 +231,4 @@ export const profileTemplates = [
 // Helper function to get template by ID
 export const getTemplateById = (id) => {
   return profileTemplates.find((template) => template.id === id);
-};
-
-// Helper function to get all template names for dropdown
-export const getTemplateOptions = () => {
-  return profileTemplates.map((template) => ({
-    label: template.name,
-    value: template.id,
-    description: template.description
-  }));
 };

@@ -1,6 +1,6 @@
 /**
  * Standardizes error responses by returning expected errors as normal messages while masking unexpected errors
- * @dev Nextjs server actions hides both expected and unexpected errors from the client. This function helps to standardize error responses.
+ * @dev TanStack server functions hides both expected and unexpected errors from the client. This function helps to standardize error responses.
  * by returning expected errors as normal messages while masking unexpected errors.
  * @param {Error|string} error - The Error object or error message.
  * @param {number} [statusCode=500] - The HTTP status code for the error response.

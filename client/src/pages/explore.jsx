@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from "react";
 import {
   Typography,
@@ -14,13 +13,27 @@ import {
   Tag,
   App as AntdApp
 } from "antd";
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { subgraphClient as client, GET_PROFILES_QUERY } from "@/app/utils";
+import { subgraphClient as client, GET_PROFILES_QUERY } from "@/utils";
 import { SyncOutlined } from "@ant-design/icons";
 
 const { Title, Paragraph } = Typography;
 const { Search } = Input;
+const SKELETON_COUNT = 8;
+
+const getCategoryColor = (category) => {
+  switch (category) {
+    case "Personal":
+      return "cyan";
+    case "Business":
+      return "blue";
+    case "Creator":
+      return "green";
+    default:
+      return "default";
+  }
+};
 
 export default function Explore() {
   const [dataLoading, setDataLoading] = useState(false);
@@ -84,6 +97,9 @@ export default function Explore() {
     fetchProfiles();
   }, [showMyProfiles, account]);
 
+  const isEmptyState = !dataLoading && profiles.length === 0;
+  const hasProfiles = !dataLoading && profiles.length > 0;
+
   return (
     <div style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 20px" }}>
       <Title level={2} style={{ textAlign: "center", marginBottom: 20 }}>
@@ -101,7 +117,6 @@ export default function Explore() {
             onSearch={fetchProfiles}
             onPressEnter={fetchProfiles}
             enterButton
-            loading={dataLoading}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ width: 300 }}
           />
@@ -126,7 +141,19 @@ export default function Explore() {
       </div>
       <div style={{ marginTop: 32 }}>
         <Row gutter={[24, 24]} justify="start">
-          {profiles.length === 0 && !dataLoading ? (
+          {dataLoading &&
+            Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+              <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                <Card
+                  cover={<div style={{ height: 100 }} />}
+                  hoverable
+                  style={{ height: 270 }}
+                  variant="outlined"
+                  loading
+                />
+              </Col>
+            ))}
+          {isEmptyState && (
             <Col span={24} style={{ textAlign: "center", marginTop: 60 }}>
               <Empty
                 description={
@@ -141,10 +168,15 @@ export default function Explore() {
                 }
               />
             </Col>
-          ) : (
+          )}
+          {hasProfiles &&
             profiles.map((item) => (
               <Col xs={24} sm={12} md={8} lg={6} key={item.handle}>
-                <Link href={`/${item?.handle}`} key="view-profile">
+                <Link
+                  to="/$handle"
+                  params={{ handle: item?.handle }}
+                  key="view-profile"
+                >
                   <Card
                     hoverable
                     variant="outlined"
@@ -176,15 +208,7 @@ export default function Explore() {
                       <Tag>#{item?.tokenId}</Tag>
                       <Tag
                         variant="outlined"
-                        color={
-                          item?.category === "Personal"
-                            ? "cyan"
-                            : item?.category === "Business"
-                              ? "blue"
-                              : item?.category === "Creator"
-                                ? "green"
-                                : "default"
-                        }
+                        color={getCategoryColor(item?.category)}
                       >
                         {item?.category}
                       </Tag>
@@ -192,8 +216,7 @@ export default function Explore() {
                   </Card>
                 </Link>
               </Col>
-            ))
-          )}
+            ))}
         </Row>
       </div>
     </div>

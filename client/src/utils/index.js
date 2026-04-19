@@ -1,33 +1,6 @@
 import { Contract, JsonRpcProvider } from "ethers";
 import { GraphQLClient, gql } from "graphql-request";
-import {
-  XOutlined,
-  FacebookOutlined,
-  YoutubeOutlined,
-  GithubOutlined,
-  GlobalOutlined,
-  DiscordOutlined,
-  FrownOutlined,
-  CodeOutlined,
-  LinkedinOutlined,
-  InstagramOutlined
-} from "@ant-design/icons";
 import { LINKFOLIO_CONTRACT_ADDRESS } from "./constants";
-
-export const supportedSocials = [
-  { id: "facebook", name: "Facebook", icon: <FacebookOutlined /> },
-  { id: "youtube", name: "YouTube", icon: <YoutubeOutlined /> },
-  { id: "github", name: "GitHub", icon: <GithubOutlined /> },
-  { id: "snapchat", name: "Snapchat", icon: <GlobalOutlined /> },
-  { id: "telegram", name: "Telegram", icon: <GlobalOutlined /> },
-  { id: "discord", name: "Discord", icon: <DiscordOutlined /> },
-  { id: "farcaster", name: "Farcaster", icon: <FrownOutlined /> },
-  { id: "blockchain", name: "Blockchain", icon: <CodeOutlined /> },
-  { id: "linkedin", name: "LinkedIn", icon: <LinkedinOutlined /> },
-  { id: "x", name: "X", icon: <XOutlined /> },
-  { id: "instagram", name: "Instagram", icon: <InstagramOutlined /> },
-  { id: "other", name: "Other", icon: <GlobalOutlined /> }
-];
 
 export const DEFAULT_APPEARANCE_SETTINGS = {
   fontFamily: "Inter, sans-serif",
@@ -43,13 +16,9 @@ export const DEFAULT_APPEARANCE_SETTINGS = {
 };
 
 // polygon amoy provider
-const defaultProvider = new JsonRpcProvider(
-  "https://rpc-amoy.polygon.technology",
-  80002,
-  {
-    staticNetwork: true
-  }
-);
+const defaultProvider = new JsonRpcProvider("https://rpc-amoy.polygon.technology", 80002, {
+  staticNetwork: true
+});
 
 const linkFolioContractABI = [
   "function createProfile(string _name, string _handle, uint8 _category, string _bio, string _avatar, string[] _linkKeys, string[] _links, string _settingsHash)",
@@ -69,7 +38,7 @@ export const linkFolioContract = new Contract(
 );
 
 const subgraphUrl =
-  process.env.NEXT_PUBLIC_SUBGRAPH_API_URL ||
+  import.meta.env.VITE_SUBGRAPH_API_URL ||
   "https://api.studio.thegraph.com/query/15343/linkfolio/version/latest";
 
 export const subgraphClient = new GraphQLClient(subgraphUrl);
@@ -160,8 +129,8 @@ export const GET_PROFILE_QUERY = gql`
         author {
           id
           name
-          avatar
           handle
+          avatar
         }
         createdAt
       }

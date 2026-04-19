@@ -1,10 +1,8 @@
-"use client";
 import { Layout, Menu, Drawer, Button, Badge, Typography, Tag } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import Link from "next/link";
-import styles from "./SiteLayout.module.css";
-import "antd/dist/reset.css";
+import { Link } from "@tanstack/react-router";
+import styles from "@/styles/SiteLayout.module.css";
 
 const { Header, Content } = Layout;
 const { Text } = Typography;
@@ -14,8 +12,16 @@ export default function SiteLayout({ children }) {
   const currentYear = new Date().getFullYear();
 
   const navigationItems = [
-    { key: "features", label: "Features", href: "/#features" },
-    { key: "create", label: "Create", href: "/#get-started" },
+    {
+      key: "features",
+      label: "Features",
+      href: "/#features"
+    },
+    {
+      key: "create",
+      label: "Create",
+      href: "/#get-started"
+    },
     { key: "explore", label: "Explore", href: "/explore" }
   ];
 
@@ -27,14 +33,13 @@ export default function SiteLayout({ children }) {
     <Layout className={styles.siteLayout}>
       <Header className={styles.siteHeader}>
         <div className={styles.leftSection}>
-          <Link href="/">
+          <Link to="/">
             <h3 className={styles.siteLogo}>🔗 LinkFolio</h3>
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className={styles.desktopNav}>
             {navigationItems.map((item) => (
-              <Link key={item.key} href={item.href} className={styles.navLink}>
+              <Link key={item.key} to={item.href} className={styles.navLink}>
                 {item.label}
               </Link>
             ))}
@@ -43,7 +48,6 @@ export default function SiteLayout({ children }) {
 
         <div className={styles.headerActions}>
           <appkit-button />
-          {/* Mobile Menu Button */}
           <Button
             className={styles.mobileMenuButton}
             type="text"
@@ -52,7 +56,6 @@ export default function SiteLayout({ children }) {
           />
         </div>
 
-        {/* Mobile Navigation Drawer */}
         <Drawer
           title="Navigation"
           placement="right"
@@ -62,11 +65,11 @@ export default function SiteLayout({ children }) {
         >
           <Menu
             mode="vertical"
-            style={{ border: "none" }}
+            style={{ border: "none", backgroundColor: "inherit" }}
             onClick={() => setMobileMenuOpen(false)}
             items={navigationItems.map((item) => ({
               key: item.key,
-              label: <Link href={item.href}>{item.label}</Link>
+              label: <Link to={item.href}>{item.label}</Link>
             }))}
           />
         </Drawer>
@@ -81,13 +84,13 @@ export default function SiteLayout({ children }) {
               © {currentYear} LinkFolio. All rights reserved.
             </p>
             <div className={styles.bottomFooterLinks}>
-              <Link href="#" className={styles.bottomFooterLink}>
+              <a href="#" className={styles.bottomFooterLink}>
                 Privacy Policy
-              </Link>
+              </a>
               <span className={styles.bottomFooterDot}>•</span>
-              <Link href="#" className={styles.bottomFooterLink}>
+              <a href="#" className={styles.bottomFooterLink}>
                 Terms of Service
-              </Link>
+              </a>
             </div>
           </div>
 

@@ -74,6 +74,12 @@ Open http://localhost:3000 with your browser to see the result.
 
 ### ChangeLog
 
+#### 0.7.1
+
+- Migrated the client from Next.js App Router to TanStack Start with Vite.
+- Moved client app code from `client/app` to `client/src` and removed obsolete Next.js files.
+- Ported the latest UI/UX updates from the LinkFolio Nero client while keeping Polygon-specific contract and network logic intact.
+
 #### 0.6.0
 
 - Migrate from NERO Chain to Polygon for enhanced scalability and performance.
@@ -146,7 +152,8 @@ Open http://localhost:3000 with your browser to see the result.
 - [Hardhat](https://hardhat.org/) - Ethereum development environment for professionals
 - [Reown Appkit](https://reown.com/appkit) - The full stack toolkit to build onchain app UX.
 - [Ethers.js](https://docs.ethers.io/v5/) - A complete and compact library for interacting with the Ethereum Blockchain and its ecosystem.
-- [Next.js](https://nextjs.org/) - The React Framework for Production.
+- [TanStack Start](https://tanstack.com/start/latest) - Full-stack React framework built on TanStack Router and Vite.
+- [Vite](https://vite.dev/) - Frontend build tool and development server.
 - [Ant Design](https://ant.design/) - A design system for enterprise-level products. Create an efficient and enjoyable work experience.
 
 ## Safety
