@@ -1,6 +1,4 @@
-"use client";
 import { useState } from "react";
-import Link from "next/link";
 import {
   Button,
   Typography,
@@ -28,10 +26,10 @@ import {
   DollarOutlined,
   NotificationOutlined
 } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
-import { linkFolioContract } from "@/app/utils";
-import Hero from "./components/Hero";
-import styles from "./page.module.css";
+import { useNavigate, Link } from "@tanstack/react-router";
+import { linkFolioContract } from "@/utils";
+import Hero from "@/components/Hero";
+import styles from "@/styles/Home.module.css";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -186,9 +184,9 @@ const resources = [
 ];
 
 const technologies = [
-  { name: "Polygon", color: "#6366f1" },
+  { name: "Polygon Amoy", color: "#8247e5" },
   { name: "TheGraph", color: "#10b981" },
-  { name: "Next.js", color: "#fdfdfd" },
+  { name: "TanStack Start", color: "#0092b8" },
   { name: "AppKit", color: "#ec4899" },
   { name: "ethers.js", color: "#f97316" },
   { name: "Ant Design", color: "#1677ff" }
@@ -197,7 +195,7 @@ const technologies = [
 export default function Home() {
   const [handle, setHandle] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
   const { message } = AntdApp.useApp();
 
   const handleClaim = async () => {
@@ -217,7 +215,11 @@ export default function Home() {
           `${handle} is already taken. Please try another one.`
         );
       }
-      router.push(`/${handle}?mode=claim`);
+      navigate({
+        to: "/$handle",
+        params: { handle },
+        search: { mode: "claim" }
+      });
     } catch (err) {
       console.error("Error while checking handle availability", err);
       message.error(
@@ -227,19 +229,13 @@ export default function Home() {
       setLoading(false);
     }
   };
-  const handleGetStarted = () => {
-    const handleInput = document.getElementById("handle-input");
-    if (handleInput) {
-      handleInput.scrollIntoView({ behavior: "smooth" });
-      handleInput.focus();
-    }
-  };
+
   return (
     <div className={styles.mainContainer}>
       {/* Hero Section */}
-      <Hero onGetStarted={handleGetStarted} />
+      <Hero />
       {/* How It Works Section */}
-      <section className={styles.howItWorksSection}>
+      <section className={styles.howItWorksSection} id="how-it-works">
         <div className="container">
           <div className={styles.sectionHeader}>
             <Title level={2} className={styles.sectionTitle}>
@@ -459,7 +455,8 @@ export default function Home() {
                 </Title>
                 <Paragraph className={styles.footerTagline}>
                   Create and own your digital identity as a soulbound NFT with
-                  on-chain metadata. Built on Polygon.
+                  on-chain metadata. Built on Polygon with a TanStack Start
+                  client.
                 </Paragraph>
 
                 <Space size="middle" className={styles.socialLinks}>
@@ -485,7 +482,7 @@ export default function Home() {
                 {quickLinks.map((link) => (
                   <Link
                     key={link.label}
-                    href={link.href}
+                    to={link.href}
                     className={styles.footerLink}
                   >
                     {link.label}
@@ -498,13 +495,13 @@ export default function Home() {
               <div className={styles.footerLinkGroup}>
                 <h4>Resources</h4>
                 {resources.map((link) => (
-                  <Link
+                  <a
                     key={link.label}
                     href={link.href}
                     className={styles.footerLink}
                   >
                     {link.label}
-                  </Link>
+                  </a>
                 ))}
               </div>
             </Col>
